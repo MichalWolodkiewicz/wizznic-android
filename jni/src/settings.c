@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <SDL.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 
 #ifdef WIN32
   #include <direct.h>

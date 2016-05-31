@@ -28,6 +28,5 @@ void setAlphaCol( int bpp );
 int_fast8_t isAlpha(int_fast8_t r, int_fast8_t g, int_fast8_t b);
 
 void debugPrintSurfaceInfo( SDL_Surface* s);
-char* debugGetFlagInfo( Uint32 flags );
 
 #endif // PIXEL_H_INCLUDED

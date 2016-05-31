@@ -24,7 +24,11 @@ static SDL_Surface* scale;
 
 SDL_Surface* swScaleInit( int sdlVideoModeFlags, int doScale )
 {
-  scale = SDL_SetVideoMode(SCREENW*doScale,SCREENH*doScale,16, sdlVideoModeFlags);
+  scale = SDL_CreateRGBSurface(0, 640, 480, 32,
+                                        0x00FF0000,
+                                        0x0000FF00,
+                                        0x000000FF,
+                                        0xFF000000);
   SDL_Surface* screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320,240,16, scale->format->Rmask,scale->format->Gmask,scale->format->Bmask,0xff000000);
 
   //Set scaling
@@ -70,6 +74,6 @@ void swScale( SDL_Surface* screen, int doScale )
 
     if( doScale > -1 )
     {
-      SDL_Flip(scale);
+      SDL_RenderPresent(scale);
     }
 }

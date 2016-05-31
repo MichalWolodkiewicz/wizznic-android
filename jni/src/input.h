@@ -42,7 +42,7 @@
 #define PLATFORM_JOY_DEADZONE 500
 #endif
 
-SDLKey getChar();
+SDL_Keycode getChar();
 void setButton(int btn); //Nasty
 int getButton(int btn);
 int getBtnTime(int btn);

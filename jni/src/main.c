@@ -20,7 +20,7 @@
 #include <time.h>
 
 #include <SDL.h>
-#include <SDL/SDL_image.h>
+#include <SDL_image.h>
 
 #include "defs.h"
 #include "board.h"
@@ -49,7 +49,7 @@
 #if defined(PC)
 #include <sys/stat.h>
 #include <unistd.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 //
 #define FFMPEG_VID_STR "ffmpeg -y -loglevel 8 -f rawvideo -pix_fmt %s -s:v 320x240  -r 50 -i - -sws_flags neighbor -vf scale=1280:960 -c:v libx264 -pix_fmt yuv420p -vb 90000k -r 60 %s_video.mp4"
 #define FFMPEG_AUD_STR "ffmpeg -y -loglevel 8 -f s16le -ar 44100 -ac 2 -i - -acodec libvorbis -ab 192k %s_sound.ogg"
@@ -65,7 +65,11 @@ void sndRec(int __attribute__((__unused__))chan, void *stream, int len, void *ud
 
 SDL_Surface* swScreen(int sdlVideoModeFlags)
 {
-  SDL_Surface* screen=SDL_SetVideoMode(SCREENW,SCREENH,16, SDL_SWSURFACE | sdlVideoModeFlags);
+  SDL_Window *screen = SDL_CreateWindow("Wizznic game window",
+                          SDL_WINDOWPOS_CENTERED,
+                          SDL_WINDOWPOS_CENTERED,
+                          640, 480,
+                          SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
 
   if( !screen )
   {
@@ -78,6 +82,12 @@ SDL_Surface* swScreen(int sdlVideoModeFlags)
 
   return(screen);
 }
+/*
+int main(int argc, char *argv[]) {
+	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Wizznic say hello");
+}
+*/
+
 
 int main(int argc, char *argv[])
 {
@@ -106,12 +116,6 @@ int main(int argc, char *argv[])
   #ifdef GCW0
     sdlVideoModeFlags = (SDL_HWSURFACE | SDL_DOUBLEBUF);
   #endif
-
-//  #ifdef WIN32
-//Redirect stdout to console on windows, so we can see what's going in.
-//  FILE *stream;
-//  stream = freopen("CON", "w", stdout);
-//  #endif
 
   //Print welcome message
   printf( "Wizznic "VERSION_STRING". GPLv3 or newer Copyleft 2009-2015\n\n");
@@ -156,7 +160,11 @@ int main(int argc, char *argv[])
 
   //Setup display
   #if defined (GP2X) || defined (PSP) || defined (WIZ) || defined(GCw0)
-  SDL_Surface* screen = SDL_SetVideoMode(SCREENW,SCREENH,16, sdlVideoModeFlags);
+  SDL_Window *screen = SDL_CreateWindow("Wizznic game window",
+                          SDL_WINDOWPOS_CENTERED,
+                          SDL_WINDOWPOS_CENTERED,
+                          640, 480,
+                          SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
   #else
   SDL_Surface* screen=NULL;
 
@@ -282,11 +290,6 @@ int main(int argc, char *argv[])
 
   }
 
-  if( setting()->fullScreen )
-  {
-    sdlVideoModeFlags |= SDL_FULLSCREEN;
-  }
-
   if(doScale)
   {
     //Hardware accelerated scaling
@@ -329,27 +332,12 @@ int main(int argc, char *argv[])
     return(-1);
   }
 
-
-  //Set window title
-  SDL_WM_SetCaption("Wizznic!", "Wizznic!");
-  //Set window icon
-  SDL_Surface* icon = IMG_Load( DATADIR"data/wmicon.png");
-  SDL_WM_SetIcon(icon, NULL);
-  SDL_FreeSurface(icon);
-
   #endif
 
   setting()->bpp = screen->format->BytesPerPixel;
   setAlphaCol( setting()->bpp );
 
   printf("Screen surface using %i bytes per pixel.\n",setting()->bpp);
-
-  //Open Joysticks (if present)
-  for(i = 0; i < SDL_NumJoysticks(); i++)
-	SDL_JoystickOpen(i);
-
-  //Hide mouse cursor
-  SDL_ShowCursor(SDL_DISABLE);
 
   //Load fonts
   txtInit();
@@ -385,20 +373,6 @@ int main(int argc, char *argv[])
 
   //Seed the pseudo random number generator (for particles 'n' stuff)
   srand( (int)time(NULL) );
-
-  #if defined(PC)
-  //Need to dump level-screenshots?
-  if(dumpPack)
-  {
-    if(isFile(dumpPack))
-    {
-      dumpOneLevelFile(screen, dumpPack);
-    } else {
-      dumplevelimages(screen, dumpPack, 0);
-    }
-    return(0);
-  }
-  #endif
 
   //init starfield
   initStars(screen);
@@ -454,66 +428,6 @@ int main(int argc, char *argv[])
 
 #endif
 
-#if defined(PC)
-
-  if(record)
-  {
-
-
-    //Check destFile does not exist
-    if( isFile(recVidFileName) )
-    {
-      printf("record: will not overwrite existing file: %s\nRename or remove it.\n", recVidFileName);
-      state=STATEQUIT;
-    }
-
-
-    //Try to open pipe
-    if( state != STATEQUIT )
-    {
-      sprintf(ffmpegCmd, FFMPEG_VID_STR, ( (screen->format->BytesPerPixel==2)?"rgb565le":"bgr24"),  recVidFileName);
-      printf("record: Attempting to popen: '%s': ", ffmpegCmd);
-      recVidPipe = popen(ffmpegCmd,"w");
-      if(recVidPipe)
-      {
-        printf("success.\n");
-      } else {
-        printf("failed.\n");
-        state=STATEQUIT;
-      }
-    }
-
-    if( state != STATEQUIT )
-    {
-
-
-      sprintf(ffmpegCmd, FFMPEG_AUD_STR, recVidFileName);
-      printf("record: Attempting to popen: '%s': \n", ffmpegCmd);
-      recSndPipe = popen(ffmpegCmd,"w");
-      if( recSndPipe )
-      {
-        printf("success.\n");
-      } else {
-        printf("failed.\n");
-        state=STATEQUIT;
-      }
-    }
-
-    if( state != STATEQUIT )
-    {
-      if( !Mix_RegisterEffect(MIX_CHANNEL_POST, sndRec, NULL, (void*)recSndPipe ) )
-      {
-        printf("record: Could not register sound-record callback.");
-        state=STATEQUIT;
-      }
-    }
-
-
-  }
-
-  screenShotSetCaptureScreen(screen);
-#endif
-
   int lastTick;
   while(state!=STATEQUIT)
   {
@@ -562,7 +476,7 @@ int main(int argc, char *argv[])
         break;
       #endif
       case 0:
-        SDL_Flip(screen);
+        SDL_RenderPresent(screen);
         break;
       #if defined(WANT_SWSCALE)
       default:
@@ -628,5 +542,3 @@ int main(int argc, char *argv[])
 
   return(0);
 }
-
-

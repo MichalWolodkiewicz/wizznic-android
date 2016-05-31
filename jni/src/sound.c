@@ -19,7 +19,7 @@
 #include "pack.h"
 #include "settings.h"
 #include <SDL.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include "states.h"
 #include "input.h"
 #include "text.h"

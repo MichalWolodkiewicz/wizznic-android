@@ -35,7 +35,7 @@ SDL_Surface* loadImg( const char* fileName )
     if(unoptimized!=NULL)
     {
       //Create optimized.
-      optimized = SDL_DisplayFormat( unoptimized );
+      optimized = SDL_ConvertSurfaceFormat(unoptimized, SDL_PIXELFORMAT_RGB888, 0);
 
       //Destroy old img
       SDL_FreeSurface( unoptimized );
@@ -43,7 +43,7 @@ SDL_Surface* loadImg( const char* fileName )
       if(optimized!=NULL)
       {
         //Set colorkey for cheap transparency
-        SDL_SetColorKey( optimized, SDL_SRCCOLORKEY, SDL_MapRGB( optimized->format, 0, 0xFF, 0xFF ) );
+        SDL_SetColorKey( optimized, SDL_TRUE, SDL_MapRGB( optimized->format, 0, 0xFF, 0xFF ) );
       }
     } else {
       printf("loadImg(%s) (IMG_Load) failed: %s\n", fileName, IMG_GetError());

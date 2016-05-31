@@ -5,3 +5,5 @@ APP_STL := stlport_static
 #armeabi armeabi-v7a 
 
 APP_ABI := x86
+
+APP_STL := stlport_static 

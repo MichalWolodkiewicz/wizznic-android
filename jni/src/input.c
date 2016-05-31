@@ -22,11 +22,11 @@
 
 #include "settings.h"
 
-static SDLKey inputChar=0;
+static int inputChar=0;
 static int joyCanMoveX=0;
 static int joyCanMoveY=0;
 
-SDLKey getChar()
+int getChar()
 {
   return(inputChar);
 }
@@ -342,11 +342,6 @@ int runControls()
           } else if( event.key.keysym.sym == SDLK_BACKSPACE || event.key.keysym.sym == SDLK_RETURN )
           {
             inputChar=event.key.keysym.sym;
-#if defined(PC)
-          } else if( event.key.keysym.sym == SDLK_F1 )
-          {
-            screenShot();
-#endif
           }
         break;
         case SDL_KEYUP:

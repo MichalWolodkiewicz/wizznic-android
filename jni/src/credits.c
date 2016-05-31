@@ -67,13 +67,13 @@ msg_t* initMsg(const char* strTitle, const char* strName,SDL_Surface* screen)
   SDL_Surface* tempSurf;
 
 
-  SDL_SetColorKey( t->surfTitle, SDL_SRCCOLORKEY, SDL_MapRGB( t->surfTitle->format, 0, 0xFF, 0xFF ) );
-  tempSurf=SDL_DisplayFormat(t->surfTitle);
+  SDL_SetColorKey( t->surfTitle, SDL_TRUE, SDL_MapRGB( t->surfTitle->format, 0, 0xFF, 0xFF ) );
+  tempSurf=SDL_ConvertSurfaceFormat(t->surfTitle, SDL_PIXELFORMAT_RGB888, 0);
   SDL_FreeSurface(t->surfTitle);
   t->surfTitle=tempSurf;
 
-  SDL_SetColorKey( t->nameWaving.img, SDL_SRCCOLORKEY, SDL_MapRGB( t->nameWaving.img->format, 0, 0xFF, 0xFF ) );
-  tempSurf=SDL_DisplayFormat(t->nameWaving.img);
+  SDL_SetColorKey( t->nameWaving.img, SDL_TRUE, SDL_MapRGB( t->nameWaving.img->format, 0, 0xFF, 0xFF ) );
+  tempSurf=SDL_ConvertSurfaceFormat(t->nameWaving.img, SDL_PIXELFORMAT_RGB888, 0);
   SDL_FreeSurface(t->nameWaving.img);
   t->nameWaving.img=tempSurf;
 

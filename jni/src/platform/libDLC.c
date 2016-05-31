@@ -84,7 +84,7 @@ void dlcTryInstall( const char* code, const char* dest )
   sprintf( cmd->destFileName, "%s/%s.bin", getUsrPackDir(), code );
   sprintf( cmd->requestCmd,CMD_DOWNLOAD_DLC_FILE, code, cmd->destFileName);
 
-  if( SDL_CreateThread( dlcDownloadThread, cmd ) == NULL )
+  if( SDL_CreateThread( dlcDownloadThread, "dlcDownloadThread", cmd ) == NULL )
   {
     printf("Error: Coulnd't start dlc download thread: %s\n", SDL_GetError());
   }
@@ -137,7 +137,7 @@ void dlcCheckOnline()
 
   sprintf( cmd->requestCmd, CMD_CHECK_DLC_API_VERSION);
 
-  SDL_CreateThread( dlcCheckOnlineThread, cmd );
+  SDL_CreateThread( dlcCheckOnlineThread, "dlcCheckOnlineThread", cmd );
   //Do not free cmd, the thread will do that.
 }
 
