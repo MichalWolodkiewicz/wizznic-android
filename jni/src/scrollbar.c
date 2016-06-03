@@ -30,12 +30,16 @@ static spriteType* scrollBarGfx[4];
 
 void scrollBarInit()
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "scrollBarInit() init start");
   sbCur=0;
   dirCntDwn=0;
-  scrollBarGfx[0] = cutSprite(loadImg(DATADIR"data/menu/scrollbar.png"),0,0,19,186);
+  scrollBarGfx[0] = cutSprite(loadImg("data/menu/scrollbar.png"),0,0,19,186);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "scrollBarGfx[0]");
   scrollBarGfx[1] = cutSprite(scrollBarGfx[0]->img,0,186,17,3);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "scrollBarGfx[1]");
   scrollBarGfx[2] = cutSprite(scrollBarGfx[0]->img,0,186+3,11,8);
   scrollBarGfx[3] = cutSprite(scrollBarGfx[0]->img,0,186+3+8,11,8);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "scrollBarInit() init start");
 }
 
 //Returns current position if a change happened, or -1 if nothing happened.

@@ -52,11 +52,13 @@ int isFile(const char* fileName)
   struct stat st;
   if(stat(fileName, &st)==0)
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "stat() return 0 for file %s",fileName);
     if( (st.st_mode&S_IFREG) == S_IFREG )
     {
       return(1);
     }
   }
+  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "stat() return -1 for file %s",fileName);
   return(0);
 }
 
@@ -94,18 +96,6 @@ int packAdd(const char* packDir, int isDLC)
 
   //Any levels? (Packs are invalid without a levels folder and atleast one level)
   sprintf(buf, "%s/levels/level000.wzp", packDir);
-  if( !isFile(buf) )
-  {
-    printf("Error: Pack '%s' must contain level000.wzp\n", packDir);
-    free(ti);
-
-    free(buf);
-    free(buf2);
-    free(val);
-    free(set);
-
-    return(0);
-  }
 
   //Initialize list for playlist
   playList = listInit(_freePlaylistItem);
@@ -180,17 +170,11 @@ int packAdd(const char* packDir, int isDLC)
   ti->icon = loadImg(buf);
   if(!ti->icon)
   {
-    ti->icon = loadImg( DATADIR"data/noicon.png" );
+    ti->icon = loadImg( "data/noicon.png" );
   }
 
   //Check if pack have a "finished" icon.
   sprintf(buf, "%s/finished.png", packDir);
-  if( !isFile( buf ) )
-  {
-    ti->hasFinishedImg=0;
-  } else {
-    ti->hasFinishedImg=1;
-  }
 
   //Set ps.cp before entering makeLevelist, it makes use of packGetFile
   ps.cp = ti;
@@ -263,7 +247,7 @@ void packScanDir( const char* path, list_t* dirList )
           if( (st.st_mode&S_IFDIR)==S_IFDIR )
           {
             //Ignore the "wizznic" directory since it's allready added.
-            if(strcmp( buf, DATADIR"packs/000_wizznic" ) != 0)
+            if(strcmp( buf, "packs/000_wizznic" ) != 0)
             {
               char* pdstr = malloc( sizeof(char)*strlen(buf)+1 );
               strcpy( pdstr, buf );
@@ -321,12 +305,12 @@ void packInit()
   ps.numPacks=0;
 
   //Add the wizznic pack as nr 0.
-  packAdd( DATADIR"packs/000_wizznic", 0 );
+  packAdd("packs/000_wizznic", 0 );
 
   list_t* packDirList = listInit(NULL);
   list_t* usrPackDirList = listInit(NULL);
 
-  packScanDir( DATADIR"packs", packDirList);
+  packScanDir("packs", packDirList);
   packScanDir( getUsrPackDir(), usrPackDirList);
 
   if(packDirList->count < 1)
@@ -383,13 +367,6 @@ const char* packGetFile(const char* path,const char* fn)
   //First, see if file exists in selected pack.
   static char buf[4096];
   sprintf( buf, "%s/%s/%s", ps.cp->path, path, fn );
- // printf("packGetFile(): request for '%s'\n", buf);
-
-  //Can't find the file in the pack? default to pack0 (wizznic standard pack)
-  if( !isFile(buf) )
-  {
-    sprintf( buf, "%s/%s/%s", ((packInfoType*)(ps.packs->begin.next->data))->path, path , fn );
-  }
 
   return(buf);
 }
@@ -481,7 +458,7 @@ void drawPackBox(SDL_Surface* screen,int posx, int posy,int packNum)
   if(!ps.packBoxImg)
   {
     //Load graphics
-    ps.packBoxImg = loadImg( DATADIR"data/pack-box-small.png" );
+    ps.packBoxImg = loadImg( "data/pack-box-small.png" );
     ps.packBoxSpr[PCKLISTIMG_SELECTED] = cutSprite(ps.packBoxImg, 0,0,260,42);
     ps.packBoxSpr[PCKLISTIMG_DEFAULT] = cutSprite(ps.packBoxImg, 0,42,260,42);
     ps.packBoxSpr[PCKLISTIMG_IS_DLC] = cutSprite(ps.packBoxImg, 0,42+42,260,42);

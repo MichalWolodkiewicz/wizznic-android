@@ -88,10 +88,14 @@ int getMenuState() { return(menuState); }
 
 int initMenu(SDL_Surface* screen)
 {
-  menuBg[MENUGFXINTRO] = loadImg( DATADIR"data/menu/intro.png" );
-  menuBg[MENUGFXHELP] = loadImg( DATADIR""PLATFORM_HELP_FILE );
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initMenu start");
+  menuBg[MENUGFXINTRO] = loadImg("data/menu/intro.png" );
+  menuBg[MENUGFXHELP] = loadImg(""PLATFORM_HELP_FILE );
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "menu images loaded");
+  
   scrollBarInit();
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "scrollBarInit ok...");
   aboutInit();
 
   menuBg[MENUGFXBYE]=0;
@@ -103,9 +107,9 @@ int initMenu(SDL_Surface* screen)
   waving.privRotAmount=0; //In case it was nan
   waving.useOverlay=1;
   waving.overlaySpeed=1;
-  waving.overlay = loadImg( DATADIR"data/menu/introoverlay.png" );
+  waving.overlay = loadImg("data/menu/introoverlay.png" );
   waving.overlayPos=waving.overlay->w+1;
-  waving.mask = loadImg( DATADIR"data/menu/intromask.png");
+  waving.mask = loadImg("data/menu/intromask.png");
 
   strStateHighScore = inpStrCreate(screen, "Name:", 1,10 );
   strStateDlcCode = inpStrCreate(screen, "Code:", 1,20 );
@@ -867,7 +871,7 @@ int runMenu(SDL_Surface* screen)
         //Show background image
         if(!menuBg[MENUGFXBYE])
         {
-          menuBg[MENUGFXBYE]=loadImg( DATADIR"data/menu/bye.png");
+          menuBg[MENUGFXBYE]=loadImg( "data/menu/bye.png");
         }
         SDL_BlitSurface(menuBg[MENUGFXBYE] , NULL, screen, &(setting()->bgPos) );
         //Fireworks?
@@ -1018,7 +1022,7 @@ int runMenu(SDL_Surface* screen)
             if(menuPosY==0) //Load empty, and create new levelname
             {
               //Load empty, set name to something diffrent
-              editorLoad( DATADIR"data/empty.wzp",screen);
+              editorLoad( "data/empty.wzp",screen);
 
               sprintf(buf, "%s/level%03i.wzp", getUserLevelDir(), getNumUserLevels());
               editorFileName(buf);
@@ -1677,7 +1681,7 @@ int runMenu(SDL_Surface* screen)
         starField(screen,0);
         if( menuYesNo == 0)
         {
-          menuYesNo = mkAni(loadImg( DATADIR"data/menu/yesno.png"), 36,42,0);
+          menuYesNo = mkAni(loadImg( "data/menu/yesno.png"), 36,42,0);
         }
 
         r.y = (setting()->bgPos.y)+ 240-64-16;
@@ -1818,7 +1822,7 @@ int runMenu(SDL_Surface* screen)
 
         if( menuYesNo == 0)
         {
-          menuYesNo = mkAni(loadImg( DATADIR"data/menu/yesno.png"), 36,42,0);
+          menuYesNo = mkAni(loadImg( "data/menu/yesno.png"), 36,42,0);
         }
 
         r.y = (setting()->bgPos.y)+ 240-60;

@@ -46,101 +46,51 @@
 #include "transition.h"
 #include "platform/libDLC.h"
 
-#if defined(PC)
-#include <sys/stat.h>
-#include <unistd.h>
-#include <SDL_mixer.h>
-//
-#define FFMPEG_VID_STR "ffmpeg -y -loglevel 8 -f rawvideo -pix_fmt %s -s:v 320x240  -r 50 -i - -sws_flags neighbor -vf scale=1280:960 -c:v libx264 -pix_fmt yuv420p -vb 90000k -r 60 %s_video.mp4"
-#define FFMPEG_AUD_STR "ffmpeg -y -loglevel 8 -f s16le -ar 44100 -ac 2 -i - -acodec libvorbis -ab 192k %s_sound.ogg"
-#define FFMPEG_MERGE_STR "ffmpeg -y -loglevel 8 -i %s_sound.ogg -i %s_video.mp4 -vcodec copy -acodec copy %s"
-
-void sndRec(int __attribute__((__unused__))chan, void *stream, int len, void *udata)
-{
-  fwrite(stream, 1, len, (FILE*)udata);
-}
-
-#endif
-
 
 SDL_Surface* swScreen(int sdlVideoModeFlags)
 {
-  SDL_Window *screen = SDL_CreateWindow("Wizznic game window",
-                          SDL_WINDOWPOS_CENTERED,
-                          SDL_WINDOWPOS_CENTERED,
-                          640, 480,
-                          SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Try to create window.");
+  SDL_Surface *screen = SDL_CreateRGBSurface(0, 640, 480, 32,
+                                        0x00FF0000,
+                                        0x0000FF00,
+                                        0x000000FF,
+                                        0xFF000000);
+	
   if( !screen )
   {
-    printf("\nERROR: Couldn't create the window, exiting...\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Window create failed. Time to exit ...");
     return(NULL);
   } else {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Window create ok ...");
     setting()->glEnable=0;
-    printf("Videomode: Unscaled %ix%i@16 bits.\n",SCREENW, SCREENH);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "glEnable set to 0.");
   }
 
-  return(screen);
+  return (screen);
 }
-/*
-int main(int argc, char *argv[]) {
-	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Wizznic say hello");
-}
-*/
-
 
 int main(int argc, char *argv[])
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "main method start");
   int doScale=0; // 0=Undefined, 1=320x240, -1=OpenGL, >1=SwScale
   char* dumpPack=NULL;
   int state=1; //Game, Menu, Editor, Quit
   int sdlVideoModeFlags = SDL_SWSURFACE;
   int i;
 
-#if defined(PC)
-  int_fast8_t record=0;
-  char *recVidFileName=NULL;
-  char *ffmpegCmd=NULL;
-  FILE* recVidPipe=NULL;
-  FILE* recSndPipe = NULL;
-#endif
-
-
-  #ifdef PSP
-    //Note to PSP porter, please test if HW is actually faster, Wizznic does a lot of memory-manipulation in the screen-surface, each call might initiate a full copy back/forth from video memory. Remove comment when read. :)
-    sdlVideoModeFlags = (SDL_HWSURFACE | SDL_DOUBLEBUF |SDL_HWACCEL);
-    SetupCallbacks();//Callbacks actifs
-    scePowerSetClockFrequency(333,333,166);
-  #endif
-
   #ifdef GCW0
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "GCW0 is defined");
     sdlVideoModeFlags = (SDL_HWSURFACE | SDL_DOUBLEBUF);
   #endif
-
-  //Print welcome message
-  printf( "Wizznic "VERSION_STRING". GPLv3 or newer Copyleft 2009-2015\n\n");
 
   //initialize path strings
   initUserPaths();
 
-  //Tell where stuff's at.
-  printf("Directories:\n    Settings: %s\n    DLC: %s\n    Highscores: %s\n    Editorlevels: %s\n    Datafiles: %s\n\n", \
-                            getConfigDir(), getUsrPackDir(), getHighscoreDir(), getUserLevelDir(), (!strlen(DATADIR))?".":DATADIR);
-
-  //Print the command line parameters
-  printf("Command-line parameters:\n"STR_VID_OPTIONS);
-
-  //Quit if user wants help
-  if( argc > 1 && ( strcmp(argv[1], "-h")==0 || strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-help")==0 ))
-  {
-    printf("Please see readme.txt or http://wizznic.org/ for more help.\n");
-    return(0);
-  }
-
   //Read settings
   initSettings();
-
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initSettings() completed");
   #if defined(WITH_OPENGL)
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "WITH_OPENGL is defined");
   //We start by enabling glScaling if it was enabled in settings, it can then be overwritten by command line options.
   if( setting()->glEnable && doScale==0 )
     doScale=-1;
@@ -152,20 +102,14 @@ int main(int argc, char *argv[])
   atexit(SDL_Quit);
 
   //Init SDL
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_TIMER ) <0 )
+  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_TIMER ) < 0 )
   {
-    printf("SDL_Init failed: %s\n",SDL_GetError());
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init failed: %s\n",SDL_GetError());
     return(-1);
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "SDL_Init is ok");
 
-  //Setup display
-  #if defined (GP2X) || defined (PSP) || defined (WIZ) || defined(GCw0)
-  SDL_Window *screen = SDL_CreateWindow("Wizznic game window",
-                          SDL_WINDOWPOS_CENTERED,
-                          SDL_WINDOWPOS_CENTERED,
-                          640, 480,
-                          SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
-  #else
   SDL_Surface* screen=NULL;
 
   for( i=0; i < argc; i++ )
@@ -264,24 +208,6 @@ int main(int argc, char *argv[])
       setting()->glEnable=1;
       setting()->rift=1;
       doScale=-1;
-
-#if defined(PC)
-    } else if( strcmp( argv[i], "-record") == 0 )
-    {
-      if( i+1 < argc )
-      {
-        i++;
-        recVidFileName=malloc(strlen(argv[i]+1) );
-        ffmpegCmd=malloc(strlen(argv[i])*3+strlen(FFMPEG_VID_STR)*3);
-
-        sprintf(recVidFileName, "%s", argv[i]);
-
-        record=1;
-      } else {
-        printf("\nError! Missing argument: fileName.mp4\n");
-        return(1);
-      }
-#endif
     } else if( i > 0 )
     {
       printf("\nError: Invalid argument '%s', quitting.\n", argv[i]);
@@ -289,9 +215,12 @@ int main(int argc, char *argv[])
     }
 
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Parameters passed ok.");
 
   if(doScale)
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "doScale == true");
     //Hardware accelerated scaling
     if( doScale == -1 )
     {
@@ -320,71 +249,81 @@ int main(int argc, char *argv[])
     #endif
     }
   } else {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "doScale == false");
     screen=swScreen(sdlVideoModeFlags);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Screen was returned");
     doScale=0;
   }
 
-  printf("Scaling factor: %f\n", setting()->scaleFactor);
-
   if( screen == NULL )
   {
-    printf("ERROR: Couldn't init video.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Couldnt init video. Time to exit ...");
     return(-1);
   }
-
-  #endif
-
-  setting()->bpp = screen->format->BytesPerPixel;
+ 
+  setting()->bpp = SDL_GetWindowPixelFormat(screen);
   setAlphaCol( setting()->bpp );
-
-  printf("Screen surface using %i bytes per pixel.\n",setting()->bpp);
-
+  
   //Load fonts
   txtInit();
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Fonts init ok.");
 
   //Menu Graphics
   if(!initMenu(screen))
   {
-    printf("Couldn't load menu graphics.\n");
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Couldn't load menu graphics");
     return(-1);
   }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initMenu() ok.");
 
   //Init controls
   initControls();
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initControls() ok.");
+	
   //Init stats
   statsInit();
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "statsInit() ok.");
+  
   //Init packs
   packInit();
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "packInit() ok.");
+ 
   //Load sounds
   if(!initSound())
   {
-    printf("Couldn't init sound.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Could not init sound.");
     return(-1);
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initSound() ok.");
 
   //Scan userlevels dir
   makeUserLevelList(screen);
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "makeUserLevelList() ok.");
+	
   //Init particles
   initParticles(screen);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initParticles() ok.");
 
   //Seed the pseudo random number generator (for particles 'n' stuff)
   srand( (int)time(NULL) );
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "srand( (int)time(NULL) );() ok.");
 
   //init starfield
   initStars(screen);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initStars() ok.");
 
   //Init pointer
   initPointer(screen);
-
-  printf("Applying settings..\n");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initPointer() ok.");
+  
   //Apply settings (has to be done after packs are inited)
   applySettings();
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "applySettings() ok.");
+  
   //Set Pack
   packSetByPath( setting()->packDir );
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "packSetByPath() ok.");
 
   #if defined( PLATFORM_SUPPORTS_STATSUPLOAD )
   if( (setting()->uploadStats) && !(setting()->firstRun) )
@@ -397,15 +336,16 @@ int main(int argc, char *argv[])
   }
   #endif
 
-  printf("Setting Music...\n");
   //Start playing music (has to be done after readong settings)
   soundSetMusic();
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "soundSetMusic() ok.");
 
   //Initialize credits
   initCredits(screen);
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initCredits(screen) ok."); 
+  
   initTransition();
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initTransition() ok."); 
 
 #if SCREENW != 320 || SCREENH != 240
   SDL_Rect *borderSrcRect = malloc(sizeof(SDL_Rect));
@@ -429,6 +369,7 @@ int main(int argc, char *argv[])
 #endif
 
   int lastTick;
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "start main loop ... :D"); 
   while(state!=STATEQUIT)
   {
     lastTick=SDL_GetTicks();
@@ -459,14 +400,6 @@ int main(int argc, char *argv[])
 
     if(setting()->showFps)
       drawFPS(screen);
-
-#if defined(PC)
-    if(record)
-    {
-      fwrite( screen->pixels, (screen->format->BytesPerPixel), (screen->w*screen->h), recVidPipe );
-    }
-#endif
-
 
     switch( doScale )
     {
@@ -503,42 +436,12 @@ int main(int argc, char *argv[])
     }
     #endif
   }
-
+ SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "after main loop ... time to leave wizznic :D"); 
   #if defined(PLATFORM_NEEDS_EXIT)
   platformExit();
   #endif
 
   SDL_Quit();
-
-#if defined(PC)
-  if( recSndPipe )
-  {
-    pclose(recSndPipe);
-  }
-  if( recVidPipe )
-  {
-    pclose(recVidPipe);
-  }
-
-  if( recSndPipe && recVidPipe )
-  {
-    //ffmpeg merge here
-    printf("Merging audio and video into '%s': ", recVidFileName);
-    sprintf(ffmpegCmd,FFMPEG_MERGE_STR, recVidFileName,recVidFileName,recVidFileName);
-    if( system(ffmpegCmd) == 0 )
-    {
-      printf("success.\n");
-      sprintf(ffmpegCmd, "%s_video.mp4", recVidFileName);
-      unlink(ffmpegCmd);
-
-      sprintf(ffmpegCmd, "%s_sound.ogg", recVidFileName);
-      unlink(ffmpegCmd);
-
-    } else {
-      printf("failed.\n");
-    }
-  }
-#endif
 
   return(0);
 }

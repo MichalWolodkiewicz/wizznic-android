@@ -105,8 +105,8 @@ void loadSettings()
   if(settings.playerName)
     free(settings.playerName);
 
-  settings.packDir = malloc(sizeof(char)*(strlen(DATADIR"packs/000_wizznic")+1) );
-  strcpy(settings.packDir, DATADIR"packs/000_wizznic");
+  settings.packDir = malloc(sizeof(char)*(strlen("packs/000_wizznic")+1) );
+  strcpy(settings.packDir, "packs/000_wizznic");
 
   settings.playerName = malloc(sizeof(char)*11 );
   strcpy(settings.playerName, "player");

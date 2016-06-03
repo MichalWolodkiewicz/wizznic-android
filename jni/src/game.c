@@ -66,7 +66,7 @@ int initGame(SDL_Surface* screen)
 	//Only load the back-image once.
     if( !ptrRestart )
     {
-    	ptrRestart = loadImg( DATADIR"data/ptr-restart.png" );
+    	ptrRestart = loadImg("data/ptr-restart.png" );
     	ptrRestartRect.x=HSCREENW-160;
     	ptrRestartRect.w=ptrRestartRect.x+ptrRestart->w;
 

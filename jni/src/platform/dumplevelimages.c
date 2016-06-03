@@ -32,7 +32,7 @@ void dumplevelimages(SDL_Surface* screen, const char* packName, int dumpStartIma
   char buf[128];
   SDL_Surface* si=0;
   //Set the pack.
-  sprintf(buf, DATADIR"packs/%s",packName);
+  sprintf(buf, "packs/%s",packName);
   packSetByPath( buf );
 
   for(l=0; l < getNumLevels(); l++)
@@ -98,7 +98,7 @@ void dumpOneLevelFile(SDL_Surface* screen, const char* fileName)
   cursorType cur;
   char buf[128];
   //Set the pack.
-  packSetByPath( DATADIR"packs/000_wizznic" );
+  packSetByPath( "packs/000_wizznic" );
 
 
     printf("Dumping level: %s to %s.tga\n", fileName, fileName);

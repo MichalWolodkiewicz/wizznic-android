@@ -32,11 +32,11 @@ void aboutInit()
   char buf[128];
   list_t* txt;
   listItem* it;
-  FILE* fp = fopen( DATADIR"data/about.txt", "r");
+  FILE* fp = fopen("data/about.txt", "r");
 
   if(!fp)
   {
-    printf("Couldn't open "DATADIR"data/about.txt\n");
+    printf("Couldn't open ""data/about.txt\n");
        return;
 
   }

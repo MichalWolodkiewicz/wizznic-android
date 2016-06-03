@@ -67,11 +67,11 @@ void editorLoad(const char* fn, SDL_Surface* screen)
 
   initDraw(pf.levelInfo, screen);
   SDL_FreeSurface(stealGfxPtr()->boardImg);
-  stealGfxPtr()->boardImg = loadImg( DATADIR"data/editbg.png" );
+  stealGfxPtr()->boardImg = loadImg( "data/editbg.png" );
 
-  selBrickBG = loadImg( DATADIR"data/editselbrick.png" );
+  selBrickBG = loadImg( "data/editselbrick.png" );
 
-  saveBtnBG = loadImg( DATADIR"data/edit-save.png" );
+  saveBtnBG = loadImg( "data/edit-save.png" );
   saveBtnSprite = cutSprite( saveBtnBG, 0,0, saveBtnBG->w, saveBtnBG->h );
 
   changed=0;

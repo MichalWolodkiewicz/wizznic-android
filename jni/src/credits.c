@@ -51,11 +51,15 @@ SDL_Rect r; //Used to shake the name
 
 msg_t* initMsg(const char* strTitle, const char* strName,SDL_Surface* screen)
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "message: [%s]", strTitle);
   msg_t* t = malloc(sizeof(msg_t));
 
   //Create surface
-  t->surfTitle = SDL_CreateRGBSurface(SDL_SWSURFACE, (getCharSize(FONTSMALL)[0]*strlen(strTitle)),(getCharSize(FONTSMALL)[1]), (setting()->bpp*8), screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,0xff000000);
-  t->nameWaving.img = SDL_CreateRGBSurface(SDL_SWSURFACE, (getCharSize(FONTMEDIUM)[0]*strlen(strName)),(getCharSize(FONTMEDIUM)[1]),(setting()->bpp*8), screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,0xff000000);
+  t->surfTitle = SDL_CreateRGBSurface(SDL_SWSURFACE, (getCharSize(FONTSMALL)[0]*strlen(strTitle)),(getCharSize(FONTSMALL)[1]), 32, screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,0xff000000);
+  if(t->surfTitle == NULL) {
+	  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "%s", SDL_GetError());
+  }
+  t->nameWaving.img = SDL_CreateRGBSurface(SDL_SWSURFACE, (getCharSize(FONTMEDIUM)[0]*strlen(strName)),(getCharSize(FONTMEDIUM)[1]),32 , screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,0xff000000);
   t->nameWaving.screen=screen;
   SDL_FillRect(t->surfTitle, 0, SDL_MapRGB(t->surfTitle->format, 0,255,255));
   SDL_FillRect(t->nameWaving.img, 0, SDL_MapRGB(t->nameWaving.img->format, 0,255,255));
@@ -76,7 +80,7 @@ msg_t* initMsg(const char* strTitle, const char* strName,SDL_Surface* screen)
   tempSurf=SDL_ConvertSurfaceFormat(t->nameWaving.img, SDL_PIXELFORMAT_RGB888, 0);
   SDL_FreeSurface(t->nameWaving.img);
   t->nameWaving.img=tempSurf;
-
+  
   return(t);
 }
 
@@ -124,8 +128,12 @@ void _freeCreditListItem(void* data)
 void initCredits(SDL_Surface* screen)
 {
   msgList=listInit(_freeCreditListItem);
-  listAppendData(msgList, (void*)initMsg("Website","wizznic.org", screen));
-  listAppendData(msgList, (void*)initMsg("Code/Gfx/Sfx","Jimmy Christensen", screen));
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initCredits 0");
+  if(msgList == NULL) {
+	  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "msgList is NULL - initCredits()"); 
+  }  
+  listAppendData(msgList, (void*)initMsg("Website","wizznic.org", screen));SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initCredits 1"); 
+  listAppendData(msgList, (void*)initMsg("Code/Gfx/Sfx","Jimmy Christensen", screen));SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initCredits 2"); 
   listAppendData(msgList, (void*)initMsg("Gfx","ViperMD", screen));
   listAppendData(msgList, (void*)initMsg("Music","Sean Hawk", screen));
 

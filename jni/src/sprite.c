@@ -22,14 +22,9 @@
 SDL_Surface* loadImg( const char* fileName )
 {
   //Load the surface
-  SDL_Surface* unoptimized = NULL;
-  SDL_Surface* optimized = NULL;
-
-  if( isFile(fileName) )
-  {
-#ifdef DEBUG
-    printf("loadImg(); Open: %s\n",fileName);
-#endif
+	SDL_Surface* unoptimized = NULL;
+	SDL_Surface* optimized = NULL;
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "loadImg(); Open: %s\n",fileName);
     unoptimized = IMG_Load( fileName );
 
     if(unoptimized!=NULL)
@@ -46,9 +41,9 @@ SDL_Surface* loadImg( const char* fileName )
         SDL_SetColorKey( optimized, SDL_TRUE, SDL_MapRGB( optimized->format, 0, 0xFF, 0xFF ) );
       }
     } else {
-      printf("loadImg(%s) (IMG_Load) failed: %s\n", fileName, IMG_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "loadImg(%s) (IMG_Load) failed: %s\n", fileName, IMG_GetError());
     }
-  }
+  
 
   return(optimized);
 }
@@ -57,7 +52,6 @@ spriteType* cutSprite(SDL_Surface* img, int x,int y, int w, int h)
 {
   //Did we get a valid surface?
   if(!img) return(NULL);
-
   //Allocate memory for the sprite
   spriteType* tspr = malloc( sizeof(spriteType) );
   if(tspr != NULL)
@@ -68,7 +62,7 @@ spriteType* cutSprite(SDL_Surface* img, int x,int y, int w, int h)
     tspr->clip.w = w;
     tspr->clip.h = h;
   } else {
-    printf("Error, couldn't malloc %lu bytes.\n",(long unsigned int)sizeof(spriteType));
+	  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Error, couldn't malloc %lu bytes.\n",(long unsigned int)sizeof(spriteType));
   }
 
   return(tspr);

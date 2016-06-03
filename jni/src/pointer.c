@@ -35,9 +35,9 @@ inpPointerState_t* getInpPointerState()
 void initPointer(SDL_Surface* screen)
 {
   //Load the "escape" overlay image
-  ptrBackImg = loadImg(DATADIR"data/ptr-back.png");
+  ptrBackImg = loadImg("data/ptr-back.png");
   if( !ptrBackImg )
-    printf("Couldn't open %s\n",DATADIR"data/ptr-back.png");
+    printf("Couldn't open %s\n","data/ptr-back.png");
 
   ptrBackRect.x=HSCREENW-160;;
   ptrBackRect.y=HSCREENH-120;;

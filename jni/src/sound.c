@@ -155,10 +155,10 @@ void loadSamples(const char* sndDir, const char* musicFile)
 
 void loadMenuSamples()
 {
-  loadSample( DATADIR"data/snd/menumove.ogg", SND_MENUMOVE );
-  loadSample( DATADIR"data/snd/menuclick.ogg", SND_MENUCLICK );
-  loadSample( DATADIR"data/snd/rocketboom.ogg", SND_ROCKETBOOM );
-  loadSample( DATADIR"data/snd/rocketlaunch.ogg", SND_ROCKETLAUNCH );
+  loadSample( "data/snd/menumove.ogg", SND_MENUMOVE );
+  loadSample( "data/snd/menuclick.ogg", SND_MENUCLICK );
+  loadSample( "data/snd/rocketboom.ogg", SND_ROCKETBOOM );
+  loadSample( "data/snd/rocketlaunch.ogg", SND_ROCKETLAUNCH );
   loadSample( packGetFile("themes/oldskool/snd", "winner.ogg"), SND_WINNER);
   loadSample( packGetFile("themes/oldskool/snd", "loser.ogg"), SND_LOSER);
 }
@@ -395,7 +395,7 @@ void soundSetMusic()
     soundPlayUserSongNum(0,0); //Sets number of tracks too.
   } else {//Or load in-game music
     //Load the menu-song
-    mus[0] = Mix_LoadMUS( DATADIR"data/menu-music.ogg" );
+    mus[0] = Mix_LoadMUS( "data/menu-music.ogg" );
 
     if(!mus[0])
     {

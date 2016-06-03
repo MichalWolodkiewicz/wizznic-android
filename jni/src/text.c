@@ -85,8 +85,8 @@ void txtFreeGameCharSet()
 
 void txtInit()
 {
-  loadFont( DATADIR"data/menu/charmap0.png", FONTSMALL,9,12);
-  loadFont( DATADIR"data/menu/charmap1.png", FONTMEDIUM,18,24);
+  loadFont( "data/menu/charmap0.png", FONTSMALL,9,12);
+  loadFont( "data/menu/charmap1.png", FONTMEDIUM,18,24);
 }
 
 void txtWrite( SDL_Surface* scr,int fontNum, const char* txt, int x, int y)

@@ -16,6 +16,7 @@
  ************************************************************************/
 
 #include "list.h"
+#include <SDL.h>
 
 void listDebugShow(list_t* list, uint_fast8_t all )
 {
@@ -109,7 +110,7 @@ listItem* listAppendData(list_t* list, void* data)
 
   //Allocate new item structure
   listItem* t=malloc(sizeof(listItem));
-
+  
   //Assign data pointer
   t->data=data;
 
