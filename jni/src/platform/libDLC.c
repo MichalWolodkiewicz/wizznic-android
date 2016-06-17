@@ -40,25 +40,25 @@ int dlcDownloadThread(void * d)
   dlcState=DLC_BUSY;
   dlcThreadCmd* cmd = (dlcThreadCmd*)d;
 
-  if( setting()->showWeb ) { printf( "%s\n", cmd->requestCmd ); }
+  if( setting()->showWeb ) { SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s\n", cmd->requestCmd ); }
 
   if( system( cmd->requestCmd ) == 0)
   {
-    printf("Bundle download success.\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Bundle download success.\n");
     int ret = debundle( cmd->destFileName, getUsrPackDir() );
     if( ret == BUNDLE_SUCCESS  )
     {
-      printf("Bundle installation success.\n");
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Bundle installation success.\n");
       dlcState = DLC_INSTALLED;
     } else {
       dlcState = DLC_BUNDLE_ERROR;
 
-      printf("Extraction failed.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Extraction failed.\n");
     }
 
     unlink(cmd->destFileName);
   } else  {
-    printf("Bundle download failed.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bundle download failed.\n");
   }
 
   if( dlcState == DLC_BUSY )
@@ -76,7 +76,7 @@ int dlcDownloadThread(void * d)
 void dlcTryInstall( const char* code, const char* dest )
 {
   dlcThreadCmd* cmd = malloc( sizeof(dlcThreadCmd) );
-  printf("Trying to install dlc %s into %s\n", code, dest);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Trying to install dlc %s into %s\n", code, dest);
 
   cmd->destFileName = malloc( strlen(getUsrPackDir())+strlen(code)+6 ); // 1 for / 4 for .bin and 1 for null terminator.
   cmd->requestCmd = malloc( 2048+strlen(cmd->destFileName) );
@@ -86,7 +86,7 @@ void dlcTryInstall( const char* code, const char* dest )
 
   if( SDL_CreateThread( dlcDownloadThread, "dlcDownloadThread", cmd ) == NULL )
   {
-    printf("Error: Coulnd't start dlc download thread: %s\n", SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Coulnd't start dlc download thread: %s\n", SDL_GetError());
   }
   //Do not free cmd, the thread will do that.
 }
@@ -99,7 +99,7 @@ int dlcCheckOnlineThread(void * d)
   FILE *pipe;
   dlcThreadCmd* cmd = (dlcThreadCmd*)d;
 
-  if( setting()->showWeb ) { printf( "%s\n", cmd->requestCmd ); }
+  if( setting()->showWeb ) { SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s\n", cmd->requestCmd ); }
 
   if( (pipe = popen( cmd->requestCmd, "r" )) != NULL )
   {
@@ -160,7 +160,7 @@ int dlcPushFile( const char* fileName, char* msg )
   char pBuf[128];
   sprintf( upCmd, CMD_UPLOAD_DLC_FILE, fileName );
 
-  if( setting()->showWeb ) { printf( "%s\n", upCmd ); }
+  if( setting()->showWeb ) { SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s\n", upCmd ); }
 
   msg[0]=0;
   if( (pipe = popen( upCmd, "r" )) != NULL )

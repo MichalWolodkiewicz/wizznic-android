@@ -53,63 +53,6 @@ void fileListFree()
   }
 }
 
-//This little gem is really cool, it resolves a path, relative to the program, to an absolute path
-//Unfortunately, after writing it, I discovered it was not what I needed.
-/*char* cleanPath(const char* path)
-{
-  char* fp = cwd(0,0);
-  char* buf = malloc(sizeof(char)*2048);
-  strcpy(buf, fp);
-
-  int p=0;
-  int i,c;
-
-
-  printf("Full Path to Wizznic executable: %s\n",fp);
-  while(path[p])
-  {
-    if( path[p]=='.' && path[p+1]=='/')
-    {
-      //p++;
-    } else if(path[p]=='.' && path[p+1]=='.')
-    {
-      p++;
-      //Cut off after last /
-      i=strlen(buf);
-      c=0;
-      while(i>-1)
-      {
-        if(buf[i]=='/')
-        {
-          buf[i]=0;
-          c++;
-          if(c==2)
-            break;
-        }
-        i--;
-      }
-    } else {
-      //Copy next char
-      i=strlen(buf);
-      buf[i]=path[p];
-      buf[i+1]=0;
-     // p++;
-
-    }
-    printf("Buf: '%s'\n", buf);
-    free(fp);
-    p++;
-  }
-
-  free(path);
-  path=malloc( sizeof(char)*(strlen(buf)+1));
-  strcpy(path,buf);
-
-  free(buf);
-  return(path);
-}*/
-
-
 void fileListMake(const char* path)
 {
 

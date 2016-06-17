@@ -21,21 +21,15 @@
 void listDebugShow(list_t* list, uint_fast8_t all )
 {
   listItem* it;
-  printf("  List %p size %i.\n", list, list->count);
-  printf("  List->begin( %p )->next = %p%s\n", &list->begin, list->begin.next, ((list->begin.next==&list->end)?" (end)":"") );
-  printf("  List->begin( %p )->prev = %p%s\n", &list->begin, list->begin.prev, ((list->begin.prev==&list->end)?" (end)":"") );
-  printf("  List->end( %p )->next = %p%s\n", &list->end, list->end.next, ((list->end.next==&list->begin)?" (begin)":"") );
-  printf("  List->end( %p )->prev = %p%s\n", &list->end, list->end.prev, ((list->end.prev==&list->begin)?" (begin)":"") );
 
   //Check that list will iterate to the end
   it = &list->begin;
   int c=0;
   while( (it=it->next) != &list->end )
   {
-    if(c++ > list->count)
-    {
-	printf("  == ERROR == More forward iterations than list elements; List is corrupt.\n");
-	return;
+    if(c++ > list->count) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "  == ERROR == More forward iterations than list elements; List is corrupt.\n");
+		return;
     }
   }
   //Check that list will iterate to the beginning
@@ -45,29 +39,29 @@ void listDebugShow(list_t* list, uint_fast8_t all )
   {
     if(c++ > list->count)
     {
-	printf("  == ERROR == More backward iterations than list elements; List is corrupt.\n");
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "  == ERROR == More backward iterations than list elements; List is corrupt.\n");
 	return;
     }
   }
 
   if( all & LIST_DEBUG_SHOW_FORWARD )
   {
-    printf("  Forward iteration:\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "  Forward iteration:\n");
     it = &list->begin;
 
     while( (it=it->next) != &list->end )
     {
-      printf("    listItem( %p )->data = %p ( prev = %p  - next = %p )\n", it, it->data, it->prev, it->next);
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "    listItem( %p )->data = %p ( prev = %p  - next = %p )\n", it, it->data, it->prev, it->next);
     }
   }
   if( all & LIST_DEBUG_SHOW_BACKWARD )
   {
-    printf("  Reverse iteration:\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "  Reverse iteration:\n");
     it = &list->end;
     c=0;
     while( (it=it->prev) != &list->begin )
     {
-      printf("    listItem( %p )->data = %p ( prev = %p  - next = %p )\n", it, it->data, it->prev, it->next);
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "    listItem( %p )->data = %p ( prev = %p  - next = %p )\n", it, it->data, it->prev, it->next);
     }
   }
 
@@ -140,7 +134,7 @@ listItem* listInsertAtIdx(list_t* list, void* data, int p)
 
   if(p<0 || p > list->count)
   {
-    printf("listInsertData Error: Position %i unacceptable for list %p with %i items.\n",p,list,list->count);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,"listInsertData Error: Position %i unacceptable for list %p with %i items.\n",p,list,list->count);
     return(0);
   }
 
@@ -262,7 +256,7 @@ listItem* listGetItemAt(list_t* list, int index)
   listItem* it;
   if(index > list->count-1 || index < 0 )
   {
-      printf("\n----\nlistGetItemData Error: Requested data for index %i in list %p of size %i\n----\n", index,list,list->count );
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\n----\nlistGetItemData Error: Requested data for index %i in list %p of size %i\n----\n", index,list,list->count );
   } else {
     if( index <= list->count/2)
     {

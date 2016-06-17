@@ -66,7 +66,7 @@ void setAlphaCol( int bpp )
     alphaG=0xff;
     alphaB=0xff;
   } else {
-    printf("setAlphaCol: Error, bpp=%i we don't support that, we will now crash.\n",bpp);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,"setAlphaCol: Error, bpp=%i we don't support that, we will now crash.\n",bpp);
   }
 }
 
@@ -104,5 +104,5 @@ uint32_t freadPixel(SDL_Surface* img, int x, int y)
 
 void debugPrintSurfaceInfo(SDL_Surface* s)
 {
-	printf("debugPrintSurfaceInfo function is now empty because of compability issues.");
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "debugPrintSurfaceInfo function is now empty because of compability issues.");
 }

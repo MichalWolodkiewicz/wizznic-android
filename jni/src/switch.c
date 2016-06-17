@@ -36,7 +36,7 @@ int switchSetTargets( playField* pf )
     //Sanity check
     if( !isSwitch( pf->board[sw->sx][sw->sy] ) )
     {
-      printf("Switch error: List tells there is a switch at %i,%i but that is not the case.\n", sw->sx, sw->sy);
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Switch error: List tells there is a switch at %i,%i but that is not the case.\n", sw->sx, sw->sy);
       free(sw);
       listRemoveItem(pf->levelInfo->switchList, it, LIST_PREV );
       continue;
@@ -45,7 +45,7 @@ int switchSetTargets( playField* pf )
     //Check that the target is a supported type
     if( !switchIsValidTarget( pf, sw->dx, sw->dy ) )
     {
-      printf("Switch error: Switch at %i,%i points at %i,%i but that's not a valid target brick.\n", sw->sx, sw->sy, sw->dx, sw->dy);
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Switch error: Switch at %i,%i points at %i,%i but that's not a valid target brick.\n", sw->sx, sw->sy, sw->dx, sw->dy);
       free(sw);
       listRemoveItem(pf->levelInfo->switchList, it, LIST_PREV );
       continue;
@@ -196,7 +196,7 @@ void switchAffectTarget( playField* pf, int x, int y, int newState )
     break;
 
     default:
-      printf( "Switch error: Type %i not handled.\n", s->target->type );
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Switch error: Type %i not handled.\n", s->target->type );
     break;
   }
   //Let's have some particles

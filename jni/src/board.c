@@ -25,6 +25,7 @@
 #include "particles.h"
 #include "draw.h"
 #include "input.h"
+#include "platform/androidUtils.h"
 
 int isWall(playField* pf, int x, int y)
 {
@@ -46,12 +47,6 @@ int isWall(playField* pf, int x, int y)
 
 void dumpBrickTypes(playField* pf)
 {
-  int t;
-  printf("BrickTypes on board:\n");
-  for(t=0; t < BRICKSEND; t++)
-  {
-    printf("  %i of type %i\n", pf->brickTypes[t],t+1);
-  }
 }
 
 
@@ -132,16 +127,17 @@ void queueBrickRemoval(playField* pf,int x,int y)
   if( pf->board[x][y]->dir == 0 )
   {
     pf->board[x][y]->dir=1;
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "append to removeList %d %d  -----", (pf->board[x][y])->dx, (pf->board[x][y])->dy);
     listAppendData(pf->removeList, (void*)pf->board[x][y]);
   }
 }
 
 int loadField(playField* pf, const char* file)
 {
-  FILE *f = fopen(file, "r");
+  FILE *f = android_fopen(file, "r");
   if(!f)
   {
-    printf("%s %i Board: couldn't open '%s'\n",__FILE__,__LINE__,file);
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "%s %i Board: couldn't open '%s'\n",__FILE__,__LINE__,file);
     return(0);
   }
 
@@ -182,7 +178,10 @@ int loadField(playField* pf, const char* file)
     {
       //Ignore windows wanting to run on a typewriter.
     } else {
-      if(x==FIELDSIZE) { return(0); } //Error loading level, bail before accesing invalid index.
+      if(x==FIELDSIZE) { 
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error loading level, bail before accesing invalid index");
+		return(0); 
+	  } //Error loading level, bail before accesing invalid index.
 
       temp[1]=fgetc(f);
       type=atoi(temp);
@@ -467,39 +466,60 @@ static int horizMover(playField* pf, int x, int y, int dir)
   return(1);
 }
 
+void debugBrick(int number, brickType* b) {
+	if(b != NULL) {
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%d simField(b->dx = %d, b->pxx = %d) ", number, b->dx, b->pxx);
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%d simField(b->dy = %d, b->pxy = %d) ", number, b->dy, b->pxy);
+	}
+}
+
+void printMoveBrickInfo(list_t* list, int label) {
+	if(list !=NULL) {
+		brickType* b = (brickType*)&list->begin.data;
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "move info %d b->pxx = %d, b->pxy = %d", label, b->pxx, b->pxy);
+	}
+}
+
 void simField(playField* pf, cursorType* cur)
 {
   int x,y;
-
   //Update moving bricks
-  listItem* li=&pf->movingList->begin;
+  listItem* li = &pf->movingList->begin;
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "movingList size = %d", pf->movingList->count);
   brickType* b;
-  x=0;
-  while( LISTFWD(pf->movingList, li) )
+  x = 0;
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "*********** WHILE START ^^^^^^^^^^^^^^^^^^^^^^^^^^");
+  while( LISTFWD(pf->movingList, li) && pf->movingList->count > 0)
   {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while step begin movingList size = %d", pf->movingList->count);
     x++;
-   // printf("Bricks in list: %i\n",x);
-    b=(brickType*)li->data;
-
+    b = (brickType*)li->data;
+	
+	debugBrick(10, b);
+	
     //Do we need to move it?
-    int deltaX= (b->dx*brickSize+boardOffsetX) - b->pxx ;
-    int deltaY= (b->dy*brickSize+boardOffsetY) - b->pxy ;
-
+    int deltaX = (b->dx*brickSize+boardOffsetX) - b->pxx ;
+    int deltaY = (b->dy*brickSize+boardOffsetY) - b->pxy ;
+	
+	debugBrick(20, b);
+	
     if(deltaX || deltaY )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "continue moveb rick");
       //Doing this lock to only move one dir at a time
-      if( deltaX )
+      if(deltaX)
       {
         b->pxx += b->moveXspeed;
 
         if(b->moveXspeed < 0 && b->pxx < (b->dx*brickSize+boardOffsetX) )
           b->pxx = (b->dx*brickSize+boardOffsetX);
-
+		
+		
         if(b->moveXspeed > 0 && b->pxx > (b->dx*brickSize+boardOffsetX) )
           b->pxx = (b->dx*brickSize+boardOffsetX);
-
+		
       }
-      if( deltaY)
+      if(deltaY)
       {
         b->pxy += b->moveYspeed;
       }
@@ -511,9 +531,8 @@ void simField(playField* pf, cursorType* cur)
         cur->px=b->pxx-4;
         cur->py=b->pxy-4;
       }
-    //  printf("Dx:%i X:%i Dy:%i Y:%i\n",deltaX,b->pxx, deltaY, b->pxy);
     } else { //Not moving anymore, put back down on board
-
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Not moving anymore, put back down on board");
       if(cur->lock && b->curLock)
       {
         cur->x=b->dx;
@@ -538,19 +557,22 @@ void simField(playField* pf, cursorType* cur)
       b->sy=b->dy;
 
       //Remove brick from moving list
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Remove brick from moving list");
       listRemoveItem( pf->movingList, li, LIST_NEXT );
     }
   }
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "*********** WHILE END ^^^^^^^^^^^^^^^^^^^^^^^^^^");
   //May I be forgiven for I do not know better.
   brickType* hack;
 
   //Run teleport rules first
   doTelePort(pf,cur);
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 4");
+  debugBrick(30, b);
   //Static bricks
   for(y=FIELDSIZE-1; y > -1; y--)
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 5");
     for(x=0; x < FIELDSIZE; x++)
     {
       if( pf->board[x][y] && !pf->board[x][y]->checked)
@@ -614,6 +636,7 @@ void simField(playField* pf, cursorType* cur)
                           hack=pf->board[x][y];
                           if(moveBrick(pf,x,y,0,(b->dy-b->sy),NOBLOCK, VERTMOVERSPEED))
                           {
+							SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "moveBrick b->dy = %d", b->dy);  
                             hack->pxy=b->pxy-20;
                             hack->moveYspeed=b->moveYspeed;
                             break;
@@ -622,6 +645,7 @@ void simField(playField* pf, cursorType* cur)
                       }
 
                       b=findMoving(pf,x,b->dy+1);
+					  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "findMoving b->dy = %d", b->dy);
                     } else {
                       break;
                     }
@@ -792,16 +816,22 @@ void simField(playField* pf, cursorType* cur)
     }
   }
 
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 6");
+  debugBrick(40, b);
   //Make switches affect the board.
   switchUpdateAll( pf );
 
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 7");
 	//Put back any reactivated walls if there is space.
   switchPutBack(pf);
-
+	
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 8");
   for(y=FIELDSIZE-1; y > -1; y--)
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 9");
     for(x=0; x < FIELDSIZE; x++)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 10");
       if(pf->board[x][y])
       {
         //Unmark "checked" status.
@@ -818,6 +848,8 @@ void simField(playField* pf, cursorType* cur)
       }
     }
   }
+  debugBrick(50, b);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "======= simField() end =====================");
 }
 
 int isBrick(brickType* b)
@@ -831,8 +863,18 @@ int onTopOfReserved(playField* pf, int x, int y)
   return( (y+1 < FIELDSIZE && pf->board[x][y+1] && pf->board[x][y+1]->type == RESERVED) );
 }
 
+void printListInfo(list_t *l) {
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "xxxxxx list size = %d", l->count);
+		int i = 0;
+		for(;i<l->count;i++) {
+			brickType* b = (brickType*)listGetItemAt(l, i);
+			SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "xxxxxx b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
+		}
+};
+
 int doRules(playField* pf)
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- doRules begin -----");
   int x,y;
   int removed=0;
   int bricksLeft=0;
@@ -845,7 +887,7 @@ int doRules(playField* pf)
     if( isBrick((brickType*)li->data) )
       bricksLeft++;
   }
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after while 1 -----");
   for(y=FIELDSIZE-1; y > -1; y--)
   {
     for(x=0; x < FIELDSIZE; x++)
@@ -895,39 +937,64 @@ int doRules(playField* pf)
 
     }
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after for 1 -----");
   //Remove ones that need removed
   li=&pf->removeList->begin;
-  while( LISTFWD(pf->removeList, li) )
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 start  -----");
+  while( pf->removeList->count > 0 && LISTFWD(pf->removeList, li))
   {
+	  printListInfo(pf->removeList);
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 ... count = %d-----", pf->removeList->count);
     //Count dying bricks as alive until they are really removed
     bricksLeft++;
     b=(brickType*)li->data;
-    if(b->dir)
-    {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- ...b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
+    if(b->dir) {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 1  -----");
       sndPlayOnce(SND_BRICKBREAK,b->pxx);
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 2  -----");
       b->dir=0;
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 3  -----");
       //Set die time left
       b->tl=pf->levelInfo->brick_die_ticks;
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 4  -----");
       //Reserve, to prevent bricks from falling into the animation
+	  if(pf->blocker != NULL) {
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- pf->blocker != NULL  -----");
+	  }
+	  if(b != NULL) {
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- b != NULL  -----");
+	  }
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
+	  // problem here
       pf->board[b->dx][b->dy]=pf->blocker;
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 5  -----");
     } else {
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 6  -----");
       b->tl -= getTicks();
-
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 7  -----");
       if(b->tl < 1)
       {
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 8  -----");
         pf->brickTypes[b->type-1]--;
-
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 9  -----");
         removed++;
         //Unreserve
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 10  -----");
         pf->board[b->dx][b->dy]=0;
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 11  -----");
         //Dealloc the brick
         free(b);
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 12  -----");
         //Remove from list
         listRemoveItem(pf->removeList, li, LIST_NEXT);
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 13  -----");
       }
     }
   }
-
+	
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after while 2 -----");
   //Check for solvability, if no bricks were removed, no bricks are moving, and no bricks are to be removed
   //resuing x as counter.
   if(removed==0 && pf->removeList->count==0 && pf->movingList->count==0)
@@ -940,13 +1007,15 @@ int doRules(playField* pf)
       }
     }
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after if 1 -----");
 
   if(removed)
     return(removed);
 
   if(!bricksLeft)
     return(NOBRICKSLEFT);
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- doRules end -----");
   return(0);
 }
 
@@ -1029,6 +1098,7 @@ brickType* brickUnderCursor(playField* pf, int x, int y)
 
 int curMoveBrick(playField *pf, brickType *b, int dir)
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "curMoveBrick start b->dy = %d", b->dy);
   //We can't move the brick, if it is falling.
   if( isBrickFalling(pf, b) ) return(0);
 
@@ -1052,10 +1122,12 @@ int curMoveBrick(playField *pf, brickType *b, int dir)
       if(!b->dmx)
       {
         b->dmx = dir;
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "curMoveBrick a end b->dy = %d", b->dy);
         return(1);
       }
     }
   }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "curMoveBrick b end b->dy = %d", b->dy);
   return(0);
 }
 
@@ -1073,6 +1145,7 @@ int boardDestroyNextBrick(playField* pf)
         if( pf->board[x][y] != pf->blocker )
         {
           pf->board[x][y]->dir=1;
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "append to removeList %d %d  -----", (pf->board[x][y])->dx, (pf->board[x][y])->dy);
           listAppendData(pf->removeList, (void*)pf->board[x][y]);
           pf->board[x][y]->dir=0;
           sndPlayOnce(SND_BRICKBREAK,pf->board[x][y]->pxx);
@@ -1094,7 +1167,7 @@ int saveLevel(const char* fileName, playField* pf)
   char buf[4096];
   int x,y;
 
-  FILE *f = fopen(fileName, "w");
+  FILE *f = android_fopen(fileName, "w");
   if(!f)
   {
     return(0);

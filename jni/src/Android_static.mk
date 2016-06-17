@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := main
+LOCAL_MODULE := wizznic
 
 LOCAL_STATIC_LIBRARIES := SDL2_static
 

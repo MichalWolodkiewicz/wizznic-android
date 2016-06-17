@@ -75,7 +75,7 @@ public class SDLActivity extends Activity {
             "SDL2_mixer",
             // "SDL2_net",
             // "SDL2_ttf",
-            "main"
+			"wizznic"
         };
     }
 

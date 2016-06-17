@@ -22,6 +22,7 @@
 #include "../cursor.h"
 #include "../player.h"
 #include "../pack.h"
+#include "platform/androidUtils.h"
 
 void dumplevelimages(SDL_Surface* screen, const char* packName, int dumpStartImage)
 {
@@ -37,7 +38,7 @@ void dumplevelimages(SDL_Surface* screen, const char* packName, int dumpStartIma
 
   for(l=0; l < getNumLevels(); l++)
   {
-    printf("Dumping level: %s\n", levelInfo(l)->file);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Dumping level: %s\n", levelInfo(l)->file);
 
     initCursor(&cur);
 
@@ -45,13 +46,13 @@ void dumplevelimages(SDL_Surface* screen, const char* packName, int dumpStartIma
 
     if(!loadField(&pf, levelInfo(l)->file ))
     {
-      printf("Error: Couldn't init board.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Couldn't init board.\n");
       return;
     }
 
     if(!initDraw(pf.levelInfo,screen))
     {
-      printf("Dump: Error: Couldn't init graphics.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Dump: Error: Couldn't init graphics.\n");
       return;
     }
 
@@ -67,7 +68,7 @@ void dumplevelimages(SDL_Surface* screen, const char* packName, int dumpStartIma
 
     if(si)
     {
-      printf("Found image: '%s'\n",packGetFile("themes/", pf.levelInfo->startImg) );
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Found image: '%s'\n",packGetFile("themes/", pf.levelInfo->startImg) );
       SDL_BlitSurface( si, 0, screen, 0 );
       SDL_FreeSurface(si);
     } else {
@@ -101,7 +102,7 @@ void dumpOneLevelFile(SDL_Surface* screen, const char* fileName)
   packSetByPath( "packs/000_wizznic" );
 
 
-    printf("Dumping level: %s to %s.tga\n", fileName, fileName);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Dumping level: %s to %s.tga\n", fileName, fileName);
 
     initCursor(&cur);
 
@@ -109,13 +110,13 @@ void dumpOneLevelFile(SDL_Surface* screen, const char* fileName)
 
     if(!loadField(&pf, fileName ))
     {
-      printf("Error: Couldn't init board.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Couldn't init board.\n");
       return;
     }
 
     if(!initDraw(pf.levelInfo,screen))
     {
-      printf("Dump: Error: Couldn't init graphics.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Dump: Error: Couldn't init graphics.\n");
       return;
     }
 
@@ -138,7 +139,7 @@ void dumpOneLevelFile(SDL_Surface* screen, const char* fileName)
 
     cleanUpDraw();
     freeField(&pf);
-    printf("Done.\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Done.\n");
 }
 
 
@@ -155,7 +156,7 @@ tgaData_t* tgaData(SDL_Surface* screen)
     free(tga->data);
   } else {
     free(tga);
-    printf("tgaData(); Not enough memory to take screenshot.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "tgaData(); Not enough memory to take screenshot.\n");
     return(NULL);
   }
 
@@ -186,10 +187,10 @@ tgaData_t* tgaData(SDL_Surface* screen)
 
 
 #ifdef DEBUG
-  printf("Surf info:\n  Pitch: %i\n  BytesPrPixel: %i\n  BitsPrPixel: %i\n",
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Surf info:\n  Pitch: %i\n  BytesPrPixel: %i\n  BitsPrPixel: %i\n",
   screen->pitch, screen->format->BytesPerPixel, screen->format->BitsPerPixel);
 
-  printf("Rmask: %i\nGmask %i\nBmask %i\nRshift: %i\nGshift %i\nBshift: %i\n",
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Rmask: %i\nGmask %i\nBmask %i\nRshift: %i\nGshift %i\nBshift: %i\n",
   screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,
   screen->format->Rshift,screen->format->Gshift,screen->format->Bshift);
  #endif
@@ -221,10 +222,10 @@ tgaData_t* tgaData(SDL_Surface* screen)
 void tgaSave(tgaData_t* tga, const char* fileName)
 {
 
-  FILE *f = fopen(fileName, "w");
+  FILE *f = android_fopen(fileName, "w");
 
 #ifdef DEBUG
-  printf("Saving: %s\n",fileName);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Saving: %s\n",fileName);
 #endif
   //Write data
   fwrite(tga->data, sizeof(unsigned char), tga->len, f);
@@ -255,10 +256,7 @@ void screenShot()
   do
   {
     sprintf(scrName, "Wizznic_%02i.tga", num);
-    if( isFile(scrName) )
-    {
-      scrName[0]=0;
-    }
+    scrName[0]=0;
     num++;
   } while (!scrName[0]);
 

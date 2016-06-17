@@ -297,7 +297,6 @@ int runEditor(SDL_Surface* screen)
           if(editIsSwitch(selBrick))
           {
             teleAddToList( pf.levelInfo->switchList, teleSrcPos[0], teleSrcPos[1], cur.x, cur.y );
-            //printf("Number of members in switchList: %i\n", listSize(pf.levelInfo->switchList) );
             cur.x = teleSrcPos[0];
             cur.y = teleSrcPos[1];
             editAddToBoard(selBrick);

@@ -28,6 +28,7 @@
 #include "userfiles.h"
 #include "bundle.h"
 #include "platform/libDLC.h"
+#include "platform/androidUtils.h"
 
 #define PCKLISTIMG_SELECTED 0
 #define PCKLISTIMG_DEFAULT  1
@@ -75,7 +76,6 @@ int isDir(const char* dirName)
   return(0);
 }
 
-
 int packAdd(const char* packDir, int isDLC)
 {
   char* buf = malloc(sizeof(char)*2048);
@@ -102,7 +102,7 @@ int packAdd(const char* packDir, int isDLC)
 
   //Open packs/packname/info.ini
   sprintf(buf, "%s/info.ini", packDir);
-  f = fopen(buf, "r");
+  f = android_fopen(buf, "r");
   if(f)
   {
     while( fgets(buf, 128, f) )
@@ -138,7 +138,7 @@ int packAdd(const char* packDir, int isDLC)
               strcpy( pli->song, set );
               listAppendData( playList, (void*)pli );
           } else {
-            printf("   Playlist entry format is mus=XX-XX,song name.ogg where XX-XX is a level range.\n");
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "   Playlist entry format is mus=XX-XX,song name.ogg where XX-XX is a level range.\n");
           }
         } else
         if(strcmp("lives", set)==0)
@@ -152,7 +152,7 @@ int packAdd(const char* packDir, int isDLC)
     fclose(f);
   } else {
     //Fall back if no file was found.
-    printf("   Warning: '%s' not found, using defaults.\n",buf);
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Warning: '%s' not found, using defaults.\n",buf);
     ti->author = malloc( sizeof(char)* 20 );
     strcpy(ti->author, "info.ini not found");
     ti->comment=ti->author;
@@ -264,21 +264,21 @@ void packScanDir( const char* path, list_t* dirList )
 
               if( l == BUNDLE_SUCCESS )
               {
-                printf("Installed bundle '%s'.\n", buf);
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Installed bundle '%s'.\n", buf);
                 char* pdstr = malloc( sizeof(char)*strlen(buf)+1 );
                 strcpy( pdstr, bundlePath() );
                 listAppendData( dirList, (void*)pdstr );
                 unlink( buf );
               } else if( l == BUNDLE_FAIL_CORRUPT )
               {
-                printf("The bundle file '%s' is corrupt, deleting it.\n", buf);
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "The bundle file '%s' is corrupt, deleting it.\n", buf);
                 unlink( buf );
               } else if( l == BUNDLE_FAIL_UNSUPPORTED_VERSION )
               {
-                printf("The bundle file '%s' is not supported by this version of Wizznic, please try and update Wizznic.\n", buf);
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "The bundle file '%s' is not supported by this version of Wizznic, please try and update Wizznic.\n", buf);
               } else if( l == BUNDLE_FAIL_DIR_EXISTS )
               {
-                printf("The bundle file '%s' has already been installed.\n", buf);
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "The bundle file '%s' has already been installed.\n", buf);
               }
 
               bundlePathReset();
@@ -286,7 +286,7 @@ void packScanDir( const char* path, list_t* dirList )
 
           }
         } else {
-          printf("packScanDir(); Error: stat('%s') failed!\n", buf);
+          SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "packScanDir(); Error: stat('%s') failed!\n", buf);
         }
       }
     }
@@ -299,7 +299,7 @@ void packScanDir( const char* path, list_t* dirList )
 void packInit()
 {
 
-  printf("initPack();\n");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "initPack();\n");
 
   ps.packs = listInit(NULL);
   ps.numPacks=0;
@@ -315,7 +315,7 @@ void packInit()
 
   if(packDirList->count < 1)
   {
-    printf("packInit(); Error: No packs found.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "packInit(); Error: No packs found.\n");
   }
 
   //Add pack directories to list of strings to be sorted
@@ -354,7 +354,7 @@ void packInit()
   //FIXME: Check if the data or pointers are copied, maybe we could free ?
   listFree( packDirList );
 
-  printf("initPack(); Added %i packs.\n", ps.packs->count);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "initPack(); Added %i packs.\n", ps.packs->count);
 
   //Do not call packSet here, it will be called after setting's are read.
 
@@ -366,8 +366,11 @@ const char* packGetFile(const char* path,const char* fn)
 {
   //First, see if file exists in selected pack.
   static char buf[4096];
-  sprintf( buf, "%s/%s/%s", ps.cp->path, path, fn );
-
+  if(path != NULL) {
+	sprintf( buf, "%s/%s/%s", ps.cp->path, path, fn );
+  } else {
+	sprintf( buf, "%s/%s", ps.cp->path, fn );
+  }
   return(buf);
 }
 
@@ -390,20 +393,20 @@ void packSet(int packNum)
     ps.selected=packNum;
   else
   {
-    printf("packSet(); Error: packNum '%i' out of range (%i)\n",packNum, ps.numPacks);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "packSet(); Error: packNum '%i' out of range (%i)\n",packNum, ps.numPacks);
     ps.selected=0;
   }
 
-  printf("packSet(); Selecting pack %i...\n", ps.selected);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "packSet(); Selecting pack %i...\n", ps.selected);
   ps.cp = (packInfoType*)listGetItemAt(ps.packs, ps.selected)->data;
 
   //Set finishedImg 0 when we select a pack, to make sure the correct image is loaded.
   ps.finishedImg=0;
 
-  printf("packSet(); Selected pack '%s' Loading stats..\n", ps.cp->path);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,"packSet(); Selected pack '%s' Loading stats..\n", ps.cp->path);
   //Load stats for this pack
   statsLoad();
-  printf("packSet(); Stats loaded.\n");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,"packSet(); Stats loaded.\n");
 
 }
 
@@ -424,7 +427,7 @@ void packSetByPath(const char* dir)
     i++;
   }
 
-  printf( "packSetByPath(); Error: Could not find pack with path '%s'\n",dir);
+  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "packSetByPath(); Error: Could not find pack with path '%s'\n",dir);
 
   packSet(0);
   return;

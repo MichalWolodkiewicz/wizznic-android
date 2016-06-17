@@ -100,4 +100,4 @@ int saveLevel(const char* fileName, playField* pf);
 int isLevelCompletable(const char* fileName);
 void setLevelCompletable(const char* fileName, int_fast8_t completable);
 
-#endif // BOARD_H_INCLUDED
+#endif

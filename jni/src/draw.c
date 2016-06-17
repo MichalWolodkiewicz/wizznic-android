@@ -32,7 +32,7 @@ int initDraw(levelInfo_t* li, SDL_Surface* screen)
   graphics.boardImg = loadImg( packGetFile("themes",li->bgFile) );
   if(!graphics.boardImg)
   {
-    printf("Couldn't load board file:'%s'\n", packGetFile("themes",li->bgFile) );
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Couldn't load board file:'%s'\n", packGetFile("themes",li->bgFile));
     cleanUpDraw();
     return(0);
   }
@@ -42,7 +42,7 @@ int initDraw(levelInfo_t* li, SDL_Surface* screen)
   graphics.background = SDL_ConvertSurface( graphics.boardImg, graphics.boardImg->format, graphics.boardImg->flags );
   if( !graphics.background )
   {
-    printf("ERROR: Could not allocate SDL_Surface for background.");
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "ERROR: Could not allocate SDL_Surface for background.");
     cleanUpDraw();
     return(0);
   }
@@ -54,7 +54,7 @@ int initDraw(levelInfo_t* li, SDL_Surface* screen)
   graphics.tileImg = loadImg( packGetFile("themes",tempStr) );
   if(!graphics.tileImg)
   {
-    printf("Couldn't load tile file:'%s'\n", packGetFile("themes",tempStr) );
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Couldn't load tile file:'%s'\n", packGetFile("themes",tempStr));
     cleanUpDraw();
     return(0);
   }
@@ -74,7 +74,7 @@ int initDraw(levelInfo_t* li, SDL_Surface* screen)
       graphics.walls[i] =  cutSprite(graphics.wallsImg, i*20,0, 20, 20);
     }
   } else {
-    printf("Error: No edges for: %s (File not found: %s)\n",li->wallBase,tempStr );
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Error: No edges for: %s (File not found: %s)\n",li->wallBase,tempStr);
     cleanUpDraw();
     return(0);
   }
@@ -87,7 +87,8 @@ int initDraw(levelInfo_t* li, SDL_Surface* screen)
     sprintf(tempStr, "%s%02i.png", li->explBase, i);
     graphics.explImg[i] = loadImg( packGetFile("themes",tempStr) );
 
-    if(!graphics.explImg[i] && i==0) printf("Couldn't open '%s'\n",packGetFile("themes",tempStr) );
+    if(!graphics.explImg[i] && i==0) 
+			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Couldn't open '%s'\n",packGetFile("themes",tempStr));
 
     if(graphics.explImg[i])
       graphics.brickExpl[i] = mkAni(graphics.explImg[i], 30,30, 0);
@@ -109,17 +110,17 @@ int initDraw(levelInfo_t* li, SDL_Surface* screen)
   graphics.curImg = loadImg( packGetFile( "themes/cursors",li->cursorFile) );
   if( !graphics.curImg )
   {
-      printf("Warning: Couldn't find cursor '%s'\n", packGetFile( "themes/cursors",li->cursorFile));
+	  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Warning: Couldn't find cursor '%s'\n", packGetFile( "themes/cursors",li->cursorFile));
   }
   graphics.curSpr[0] = cutSprite(graphics.curImg, 0, 0, 28,28);
   graphics.curSpr[1] = cutSprite(graphics.curImg, 28, 0, 28,28);
 
 
   //Load countdown
-  graphics.countDownImg = loadImg( packGetFile(".","countdown.png") );
+  graphics.countDownImg = loadImg( packGetFile(NULL,"countdown.png") );
   if(!graphics.countDownImg)
   {
-    printf("Error(5): couldn't load '%s'\n",packGetFile(".","countdown.png"));
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Error(5): couldn't load '%s'\n",packGetFile(".","countdown.png"));
     return(0);
   }
   //Cut countdown

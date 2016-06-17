@@ -23,6 +23,7 @@
 #include "player.h"
 #include "settings.h"
 #include "userfiles.h"
+#include "platform/androidUtils.h"
 
 static stats_t st;
 
@@ -36,7 +37,7 @@ stats_t* stats()
 void statsInit()
 {
   memset( &st, 0, sizeof(stats_t) );
-  printf("statsInit(); Stats ready to be refreshed.\n");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "statsInit(); Stats ready to be refreshed.\n");
 }
 
 //Tries to load stats
@@ -99,7 +100,7 @@ void statsLoad()
     free(st.hsFn);
   st.hsFn = malloc(sizeof(char)*strlen(bufb)+1);
   strcpy(st.hsFn, bufb);
-  f=fopen(st.hsFn, "r");
+  f=android_fopen(st.hsFn, "r");
 
 
   if(f)
@@ -115,7 +116,7 @@ void statsLoad()
       size_t elementsRead = fread( (void*)(&sfh), sizeof(statsFileHeader_t), 1, f);
       if( elementsRead != 1 )
       {
-        printf("Something went wrong while trying to read '%s'\n",st.hsFn);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Something went wrong while trying to read '%s'\n",st.hsFn);
       }
       //Set progress
       st.progress = sfh.progress;
@@ -138,7 +139,7 @@ void statsLoad()
             memcpy( hs, &ths, sizeof(hsEntry_t) );
           }
         } else {
-          printf("That's odd, there's an entry for level %i even though there's only %i levels in the pack. (levelStats is %i)\n", ths.levelNum, getNumLevels(), st.levelStats->count );
+          SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "That's odd, there's an entry for level %i even though there's only %i levels in the pack. (levelStats is %i)\n", ths.levelNum, getNumLevels(), st.levelStats->count );
         }
       }
 
@@ -159,7 +160,7 @@ void statsLoad()
     } else {
 
       //TODO: This is not how we will handle it, if the format ever changes we will use version info to migrate to new format.
-      printf("File '%s' is version %i but current version is %i, deleting the file.\n", st.hsFn, i, STATS_FILE_FORMAT_VERSION);
+      SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "File '%s' is version %i but current version is %i, deleting the file.\n", st.hsFn, i, STATS_FILE_FORMAT_VERSION);
       fclose(f);
       packUnlinkHsFile();
     }
@@ -177,12 +178,12 @@ void statsSave()
   //Check that there's a filename to write to (st is all 0's if not)
   if(!st.hsFn)
   {
-    printf("statsSave(); Fatal error; Called to save stats, but there's no filename to save.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,"statsSave(); Fatal error; Called to save stats, but there's no filename to save.\n");
     return;
   }
 
   //Open file
-  FILE* f = fopen(st.hsFn, "w");
+  FILE* f = android_fopen(st.hsFn, "w");
   if(f)
   {
     //Fill in header
@@ -214,7 +215,7 @@ void statsSave()
 
     fclose(f);
   } else {
-    printf("Error, couldn't open '%s' for writing.\n", st.hsFn);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error, couldn't open '%s' for writing.\n", st.hsFn);
   }
 
 }
@@ -372,7 +373,7 @@ void statsSaveHighScore()
 
 void statsReset()
 {
-  printf("Cleared progress for current pack.\n");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Cleared progress for current pack.\n");
   initPlayer();
   packUnlinkHsFile();
   statsLoad();
@@ -381,7 +382,7 @@ void statsReset()
 void packUnlinkHsFile()
 {
   //First we find out if it exists on the filesystem
-  FILE* f=fopen(st.hsFn, "r");
+  FILE* f=android_fopen(st.hsFn, "r");
   if(f)
   {
     fclose(f);
@@ -406,7 +407,7 @@ int upStatsThread(void * d)
   char* cmd = dat->cmd;
   int* ret = dat->ret;
 
-  if( setting()->showWeb ) { printf( "%s\n", cmd ); }
+  if( setting()->showWeb ) { SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s\n", cmd ); }
 
   if( (pipe = popen( cmd, "r" )) != NULL )
   {
@@ -414,7 +415,7 @@ int upStatsThread(void * d)
 
       if( fread( pBuf, 1,2047, pipe)!= 0 )
       {
-        if( setting()->showWeb ) { printf("Server returned:'%s'\n",pBuf); }
+        if( setting()->showWeb ) { SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Server returned:'%s'\n",pBuf); }
         if(ret)
         {
           *ret=atoi(pBuf);
@@ -447,10 +448,10 @@ void statsUpload(int level, int time, int moves, int combos, int score, const ch
       thrData->ret=retVal;
       if( SDL_CreateThread( upStatsThread, "stats_SDL_thread", (void*)thrData ) == NULL )
       {
-        printf("Warning: Coulnd't start thread: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Warning: Coulnd't start thread: %s\n", SDL_GetError());
       }
     } else {
-      printf("Error: sprintf returned %i\n", b);
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: sprintf returned %i\n", b);
     }
   }
   #endif

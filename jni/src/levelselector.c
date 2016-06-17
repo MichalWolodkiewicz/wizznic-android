@@ -43,7 +43,6 @@ void resetLevelSelector()
 
 void levelSelector(SDL_Surface* screen, int l, int stats)
 {
-
   if(lastSelected != l)
   {
     //Unload the previously loaded level-preview

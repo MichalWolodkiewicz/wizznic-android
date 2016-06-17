@@ -23,6 +23,7 @@
 #include "list/list.h"
 #include "defs.h"
 #include "text.h"
+#include "platform/androidUtils.h"
 
 static char** lines;
 int numLines;
@@ -32,12 +33,12 @@ void aboutInit()
   char buf[128];
   list_t* txt;
   listItem* it;
-  FILE* fp = fopen("data/about.txt", "r");
+  FILE* fp = android_fopen("data/about.txt", "r");
 
   if(!fp)
   {
-    printf("Couldn't open ""data/about.txt\n");
-       return;
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Couldn't open data/about.txt");
+    return;
 
   }
   txt = listInit(NULL);

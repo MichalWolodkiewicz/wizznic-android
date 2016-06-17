@@ -56,17 +56,18 @@ void loadFont(const char* imgFileName, int fontNum,int w, int h )
       }
     }
   } else {
-    printf("fontLoad(); Can't load '%s'\n", imgFileName);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "fontLoad(); Can't load '%s'\n", imgFileName);
   }
 }
 
 void txtLoadGameCharSet(const char* font)
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "font name = %s", font);
   char* buf = malloc( sizeof(char)*128 );
   sprintf( buf, "%s0.png", font );
-  loadFont( packGetFile( "themes/chars/",buf),GAMEFONTSMALL,9,12);
+  loadFont( packGetFile( "themes/chars",buf),GAMEFONTSMALL,9,12);
   sprintf( buf, "%s1.png", font );
-  loadFont( packGetFile( "themes/chars/",buf),GAMEFONTMEDIUM,18,24);
+  loadFont( packGetFile( "themes/chars",buf),GAMEFONTMEDIUM,18,24);
   free( buf );
 }
 

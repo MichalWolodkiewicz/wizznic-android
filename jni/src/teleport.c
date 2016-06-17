@@ -58,7 +58,7 @@ void teleAddFromString(list_t* l, const char* str)
   }
 
   if(fail)
-    printf("teleAddFromString failed because of string '%s'\n", str);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "teleAddFromString failed because of string '%s'\n", str);
 
   free(srcStr);
   free(dstStr);

@@ -47,48 +47,37 @@
 #include "platform/libDLC.h"
 
 
-SDL_Surface* swScreen(int sdlVideoModeFlags)
+SDL_Surface* swScreen()
 {
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Try to create window.");
-  SDL_Surface *screen = SDL_CreateRGBSurface(0, 640, 480, 32,
+  SDL_Surface *screen = SDL_CreateRGBSurface(0, 1024, 600, 32,
                                         0x00FF0000,
                                         0x0000FF00,
                                         0x000000FF,
                                         0xFF000000);
 	
-  if( !screen )
-  {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Window create failed. Time to exit ...");
+  if( !screen ) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "Screen surface create failed. Time to exit ...");
     return(NULL);
   } else {
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Window create ok ...");
     setting()->glEnable=0;
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "glEnable set to 0.");
   }
-
   return (screen);
 }
 
-int main(int argc, char *argv[])
-{
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "main method start");
-  int doScale=0; // 0=Undefined, 1=320x240, -1=OpenGL, >1=SwScale
-  char* dumpPack=NULL;
-  int state=1; //Game, Menu, Editor, Quit
+int main(int argc, char *argv[]) {
+  int doScale = 0; // 0=Undefined, 1=320x240, -1=OpenGL, >1=SwScale
+  char* dumpPack = NULL;
+  int state = 1; //Game, Menu, Editor, Quit
   int sdlVideoModeFlags = SDL_SWSURFACE;
   int i;
-
-  #ifdef GCW0
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "GCW0 is defined");
-    sdlVideoModeFlags = (SDL_HWSURFACE | SDL_DOUBLEBUF);
-  #endif
 
   //initialize path strings
   initUserPaths();
 
   //Read settings
   initSettings();
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initSettings() completed");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initSettings() completed");
   #if defined(WITH_OPENGL)
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "WITH_OPENGL is defined");
   //We start by enabling glScaling if it was enabled in settings, it can then be overwritten by command line options.
@@ -102,119 +91,26 @@ int main(int argc, char *argv[])
   atexit(SDL_Quit);
 
   //Init SDL
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_TIMER ) < 0 )
-  {
-	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init failed: %s\n",SDL_GetError());
+  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_TIMER ) < 0 ) {
+	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init failed: %s\n", SDL_GetError());
     return(-1);
   }
-  
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "SDL_Init is ok");
 
-  SDL_Surface* screen=NULL;
-
-  for( i=0; i < argc; i++ )
-  {
-    if( strcmp( argv[i], "-sw" ) == 0 )
-    {
-      setting()->glEnable=0;
-      doScale=0;
-      saveSettings();
-    } else
-    if( strcmp( argv[i], "-gl" ) == 0 )
-    {
-      setting()->glEnable=1;
-      doScale=-1;
-      saveSettings();
-    } else
-    if( strcmp( argv[i], "-z" ) == 0 )
-    {
-      if( i+1 < argc )
-      {
-        doScale = atoi( argv[i+1] );
-        setting()->glEnable=0;
-        i++;
-        saveSettings();
-      } else {
-        printf(" -z requires zoom level ( -z 2 for example ).\n");
-        return(1);
-      }
-    } else
-    if( strcmp( argv[i], "-f" ) == 0 )
-    {
-        setting()->fullScreen=1;
-        saveSettings();
-    } else
-    if( strcmp( argv[i], "-w" ) == 0 )
-      {
-        setting()->fullScreen=0;
-        saveSettings();
-    } else if( strcmp( argv[i], "-glheight" ) == 0 )
-    {
-      if( i+1 < argc )
-      {
-        setting()->glHeight = atoi( argv[i+1] );
-        setting()->glEnable=1;
-        doScale=-1;
-        i++;
-        printf("Setting OpenGL window height to %i.\n", setting()->glHeight);
-        saveSettings();
-      } else {
-        printf(" -glheight requires an argument (-1 or size in pixels).\n");
-        return(1);
-      }
-    } else if( strcmp( argv[i], "-glwidth" ) == 0 )
-    {
-      if( i+1 < argc )
-      {
-        setting()->glWidth = atoi( argv[i+1] );
-        setting()->glEnable=1;
-        doScale=-1;
-        i++;
-        printf("Setting OpenGL window width to %i.\n", setting()->glWidth);
-        saveSettings();
-      } else {
-        printf(" -glwidth requires an argument (-1 or size in pixels).\n");
-        return(1);
-      }
-    } else if( strcmp( argv[i], "-glfilter" ) == 0 )
-    {
-      if( i+1 < argc )
-      {
-        setting()->glFilter=atoi(argv[i+1]);
-        printf("OpenGL texture filtering set to %s.\n", (setting()->glFilter)?"Smooth":"Off");
-        i++;
-        saveSettings();
-      } else {
-        printf("-glfilter requires 0 or 1 as argument.\n");
-        return(1);
-      }
-    } else if( strcmp( argv[i] , "-d" ) == 0 )
-    {
-      if( argc == 3 && i < argc+1 )
-      {
-        dumpPack = malloc( sizeof(char)*strlen(argv[i+1])+1 );
-        strcpy( dumpPack, argv[i+1] );
-        doScale=0;
-        setting()->glEnable=0;
-        i++;
-      } else {
-        printf("-d requires a packname or filename, and must not be used with other parameters.\n");
-        return(1);
-      }
-    } else if( strcmp( argv[i], "-rift") == 0 )
-    {
-      setting()->glWidth = 1280;
-      setting()->glHeight = 800;
-      setting()->glEnable=1;
-      setting()->rift=1;
-      doScale=-1;
-    } else if( i > 0 )
-    {
-      printf("\nError: Invalid argument '%s', quitting.\n", argv[i]);
-      return(1);
-    }
-
-  }
+  SDL_Surface* screen = NULL;
+  
+  SDL_Window *sdlWindow = SDL_CreateWindow("Wizznic Android",
+							SDL_WINDOWPOS_UNDEFINED,
+							SDL_WINDOWPOS_UNDEFINED,
+                            0, 0,
+                            SDL_WINDOW_FULLSCREEN_DESKTOP);
+  
+  SDL_Renderer *sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+  
+  SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer,
+                                            SDL_PIXELFORMAT_ARGB8888,
+                                            SDL_TEXTUREACCESS_STREAMING,
+                                            1024, 600);
   
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Parameters passed ok.");
 
@@ -225,32 +121,32 @@ int main(int argc, char *argv[])
     if( doScale == -1 )
     {
     #ifdef HAVE_ACCELERATION
-      printf("Enabling platform specific accelerated scaling.\n");
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Enabling platform specific accelerated scaling.\n");
       screen = platformInitAccel(sdlVideoModeFlags);
       if( !screen )
       {
-        printf("Failed to set platform accelerated scaling, falling back to software window.\n");
-        screen=swScreen(SDL_SWSURFACE);
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Failed to set platform accelerated scaling, falling back to software window.\n");
+        screen=swScreen();
         doScale=0;
       }
     #else
-      printf("\nError:\n  Not compiled with hardware-scaling support, don't give me -z -1\n  Exiting...\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\nError:\n  Not compiled with hardware-scaling support, don't give me -z -1\n  Exiting...\n");
       return(-1);
     #endif
     } else if( doScale > 0 )
     {
     #ifdef WANT_SWSCALE
       //Set up software scaling
-      printf("Enabling slow software-based scaling to %ix%i.\n",320*doScale, 240*doScale);
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Enabling slow software-based scaling to %ix%i.\n",320*doScale, 240*doScale);
       screen = swScaleInit(sdlVideoModeFlags,doScale);
     #else
-      printf("\nError:\n  I don't support software scaling, don't give me any -z options\n  Exiting...\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\nError:\n  I don't support software scaling, don't give me any -z options\n  Exiting...\n");
       return(-1);
     #endif
     }
   } else {
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "doScale == false");
-    screen=swScreen(sdlVideoModeFlags);
+    screen=swScreen();
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Screen was returned");
     doScale=0;
   }
@@ -261,7 +157,7 @@ int main(int argc, char *argv[])
     return(-1);
   }
  
-  setting()->bpp = SDL_GetWindowPixelFormat(screen);
+  setting()->bpp = SDL_GetWindowPixelFormat(sdlWindow);
   setAlphaCol( setting()->bpp );
   
   //Load fonts
@@ -346,13 +242,15 @@ int main(int argc, char *argv[])
   
   initTransition();
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initTransition() ok."); 
-
+	
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Screen size is %dx%d", SCREENW, SCREENH); 	
+	
 #if SCREENW != 320 || SCREENH != 240
   SDL_Rect *borderSrcRect = malloc(sizeof(SDL_Rect));
   SDL_Surface* border = loadImg( BORDER_IMAGE );
   if( border )
   {
-    printf("Border image loaded.\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Border image loaded.\n");
     borderSrcRect->x=(border->w-SCREENW)/2;
     borderSrcRect->y=(border->h-SCREENH)/2;
     borderSrcRect->w=SCREENW;
@@ -360,7 +258,7 @@ int main(int argc, char *argv[])
     SDL_BlitSurface( border, borderSrcRect, screen, NULL );
     SDL_FreeSurface(border);
   } else {
-    printf("Could not load border image: %s\n", BORDER_IMAGE);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not load border image: %s\n", BORDER_IMAGE);
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0,0,0));
   }
   free(borderSrcRect);
@@ -409,7 +307,10 @@ int main(int argc, char *argv[])
         break;
       #endif
       case 0:
-        SDL_RenderPresent(screen);
+		  SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+		  SDL_RenderClear(sdlRenderer);
+		  SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+		  SDL_RenderPresent(sdlRenderer);
         break;
       #if defined(WANT_SWSCALE)
       default:

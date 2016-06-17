@@ -41,6 +41,7 @@
 #include "sound.h"
 #include "defs.h"
 #include "userfiles.h"
+#include "platform/androidUtils.h"
 
 static settings_t settings;
 
@@ -54,7 +55,7 @@ void initSettings()
 {
   settings.packDir=0;
   settings.playerName=0;
-  printf( "Loading settings from: %s/settings.ini\n", getConfigDir() );
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Loading settings from: %s/settings.ini\n", getConfigDir() );
 
   loadSettings();
 }
@@ -113,11 +114,11 @@ void loadSettings()
 
   settings.musicDir = cwd( NULL, 0 );
   if( !settings.musicDir )
-    printf("Out of memory, will crash soon.\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Out of memory, will crash soon.\n");
 
   sprintf( buf, "%s/settings.ini", getConfigDir() );
 
-  FILE *f = fopen(buf, "r");
+  FILE *f = android_fopen(buf, "r");
   if(f)
   {
     while( fgets(buf, 128, f) )
@@ -166,7 +167,7 @@ void loadSettings()
           {
             strcpy(settings.playerName,val);
           } else {
-            printf("Error, name: '%s' too long, max length is 10.\n",set);
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error, name: '%s' too long, max length is 10.\n",set);
           }
         } else
         if( strcmp("musicdir", set)==0 )
@@ -178,7 +179,7 @@ void loadSettings()
             settings.musicDir = malloc(sizeof(char)*(strlen(val)+1) );
             strcpy(settings.musicDir, val);
           } else {
-            printf("Using '%s' as music directory instead of '%s'.\n", settings.musicDir, val);
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Using '%s' as music directory instead of '%s'.\n", settings.musicDir, val);
           }
         } else
         if( strcmp("usermusic", set)==0 )
@@ -238,55 +239,7 @@ void loadSettings()
 
 void saveSettings()
 {
-  char* buf = malloc(sizeof(char)*1024);
-  sprintf( buf, "%s/settings.ini", getConfigDir() );
-
-  FILE *f = fopen(buf, "w");
-  if(f)
-  {
-    fprintf(f, "# Sound volume (0-128)\nsoundvol=%i\n\n"
-               "# Music volume (0-128)\nmusicvol=%i\n\n"
-               "# For the GP2X Wiz handheld: CPU Mhz.\nwizclock=%i\n\n"
-               "# For the GP2X Wiz handheld: System-volume.\nwizvolume=%i\n\n"
-               "# Show the FPS counter? 0 = No,  1 = Yes.\nshowfps=%i\n\n"
-               "# Use particle effects? 0 = No,  1 = Yes.\nparticles=%i\n\n"
-               "# 0 = Normal mode, progress through levels.\n# 1 = Arcade mode: Start on first level at game-over.\narcademode=%i\n\n"
-               "# The currently selected content pack.\npackdir=%s\n\n"
-               "# Name of the player.\nplayername=%s\n\n"
-               "# If usermusic is on, play music from this directory.\nmusicdir=%s\n\n"
-               "# 0 = Play the music that comes with the game. 1 = Use user-selected music. \nusermusic=%i\n\n"
-               "# 0 = Play music. 1 = Don't load any music (faster loading)\ndisablemusic=%i\n\n"
-               "# Allow Wizznic to access the Internet (http://wizznic.org)\n# 0 = No, 1 = Yes.\n# Helps Jimmy create more balanced gameplay in future versions.\n# Enables DLC downloading.\nallowonline=%i\n\n"
-               "# 0 = No OpenGL Scaling. 1 = Use OpenGL to scale the image.\nglenable=%i\n\n"
-               "# How to scale graphics ( 0 = Blocky/Sharp, 1 = Smooth/Blurry)\nglfilter=%i\n\n"
-               "# If using glenable, the width of the window in pixels.\nglwidth=%i\n\n"
-               "# If using glenable, the height of the window in pixels.\n# If this is -1, then select window size automatically.\nglheight=%i\n\n"
-               "# Go to full-screen mode.\nfullscreen=%i\n\n"
-               "# printf network traffic (when uploadstats=1)\nshowweb=%i\n",
-               settings.soundVol,
-               settings.musicVol,
-               settings.wizClock,
-               settings.wizVol,
-               settings.showFps,
-               settings.particles,
-               settings.arcadeMode,
-               settings.packDir,
-               settings.playerName,
-               settings.musicDir,
-               settings.userMusic,
-               settings.disableMusic,
-               settings.uploadStats,
-               settings.glEnable,
-               settings.glFilter,
-               settings.glWidth,
-               settings.glHeight,
-               settings.fullScreen,
-               settings.showWeb);
-    fclose( f );
-  } else {
-    printf("saveSettings(); Error: Couldn't open 'settings.ini' for writing.\n");
-  }
-  free(buf);
+  
 }
 
 void applySettings()

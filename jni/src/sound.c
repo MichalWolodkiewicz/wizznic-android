@@ -50,7 +50,7 @@ int initSound()
 
   if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers))
   {
-    printf("Couldn't open audio: '%s'\n", Mix_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't open audio: '%s'\n", Mix_GetError());
     return(0);
   }
 
@@ -73,7 +73,7 @@ int loadSample(const char* fileName, int index)
 {
   lastPlayed[index]=0;
 #ifdef DEBUG
-  printf("loadSample(); Open: %s\n", fileName);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "loadSample(); Open: %s\n", fileName);
 #endif
   //Check if we should load it
   if(!loadedSamples[index] || strcmp(loadedSamples[index], fileName)!=0)
@@ -95,7 +95,7 @@ int loadSample(const char* fileName, int index)
     samples[index] = Mix_LoadWAV(fileName);
     if(!samples[index])
     {
-      printf("loadSample(); Warning: Couldn't load %s\n",fileName);
+      SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "loadSample(); Warning: Couldn't load %s\n",fileName);
       return(0);
     }
   }
@@ -131,17 +131,17 @@ void loadSamples(const char* sndDir, const char* musicFile)
   if( !musicFile ) return;
 
   //Load ingame song if not allready loaded.
-  if(strcmp(lastLoadedSongFn, packGetFile("./",musicFile))!=0 && !setting()->userMusic)
+  if(strcmp(lastLoadedSongFn, packGetFile(NULL,musicFile))!=0 && !setting()->userMusic)
   {
     //Free old song if loaded.
     if(mus[1])
     {
       Mix_FreeMusic(mus[1]);
     }
-    strcpy(lastLoadedSongFn, packGetFile("./",musicFile));
+    strcpy(lastLoadedSongFn, packGetFile(NULL,musicFile));
     mus[1]=Mix_LoadMUS( lastLoadedSongFn );
     if(!mus[1])
-      printf("Couldn't load music: '%s'\n",packGetFile("./",musicFile));
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load music: '%s'\n",packGetFile(NULL,musicFile));
 
     mPos[1] = 0.0f;
 
@@ -343,11 +343,11 @@ void soundPlayUserSongNum(int num, char* songName)
         mus[1]=Mix_LoadMUS( file->fullName );
         if(!mus[1])
         {
-          printf("Couldn't load music: '%s'\n",file->fullName);
+          SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load music: '%s'\n",file->fullName);
         }
         else
         {
-          printf("Now Playing: '%s'\n",file->fullName);
+          SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Now Playing: '%s'\n",file->fullName);
           if(songName)
           {
             showSNCD=SHOW_SONG_TIME;
@@ -399,7 +399,7 @@ void soundSetMusic()
 
     if(!mus[0])
     {
-      printf("initSound(); Error; couldn't load menu-music.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "initSound(); Error; couldn't load menu-music.\n");
     }
 
     Mix_FadeInMusic(mus[0], -1, 1500);

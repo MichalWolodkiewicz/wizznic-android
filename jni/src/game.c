@@ -59,7 +59,7 @@ int initGame(SDL_Surface* screen)
 {
     if(player()->gameStarted)
     {
-      printf("ERROR: Called init when a game was running\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Called init when a game was running\n");
       return(0);
     }
 
@@ -83,14 +83,14 @@ int initGame(SDL_Surface* screen)
 
     if(!loadField(&pf, player()->levelFile ))
     {
-      printf("Error: Couldn't init playfield.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Couldn't init playfield.\n");
       return(0);
     }
 
 
     if(!initDraw(pf.levelInfo,screen))
     {
-      printf("Error: Couldn't init graphics.\n");
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Couldn't init graphics.\n");
       return(0);
     }
 
@@ -151,6 +151,7 @@ static void setGameOver()
 
 void drawUi(SDL_Surface* screen)
 {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "drawUi begin"); 
    //Draw text
   char tempStr[16];
 
@@ -177,6 +178,7 @@ void drawUi(SDL_Surface* screen)
     sprintf(tempStr, "%i", player()->lives );
     txtWriteCenter(screen, GAMEFONTMEDIUM, tempStr, HSCREENW-113, HSCREENH+58);
   }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "drawUi end"); 
 }
 
 int lostLifeMsg( cursorType* cur, playField* pf, SDL_Surface* screen, const char* strmsg, const char* straction )
@@ -264,14 +266,18 @@ void gameRestart(SDL_Surface* screen)
 
 int runGame(SDL_Surface* screen)
 {
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame begin"); 
   if(gameState==GAMESTATEPLAYING)
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame GAMESTATEPLAYING");
     getInpPointerState()->escEnable=1;
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 1");
     //Handle input
     int lim=1; //Limit cursor travel...
     int goUp=0, goDown=0, goLeft=0, goRight=0;
     if( getButton( C_UP ) )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame C_UP");
       restartConfirm=0;
       if( getBtnTime( C_UP ) > REPEATDELAY )
       {
@@ -284,6 +290,7 @@ int runGame(SDL_Surface* screen)
 
     if( getButton( C_DOWN ) )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame C_DOWN");
       restartConfirm=0;
       if( getBtnTime( C_DOWN ) > REPEATDELAY )
       {
@@ -296,6 +303,7 @@ int runGame(SDL_Surface* screen)
 
     if( getButton( C_LEFT ) )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame C_LEFT");
       restartConfirm=0;
       if( getBtnTime( C_LEFT ) > REPEATDELAY )
       {
@@ -308,6 +316,7 @@ int runGame(SDL_Surface* screen)
 
     if( getButton( C_RIGHT ) )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame C_RIGHT");
       restartConfirm=0;
       if( getBtnTime( C_RIGHT ) > REPEATDELAY )
       {
@@ -321,6 +330,7 @@ int runGame(SDL_Surface* screen)
     //Pause ?
     if( getButton( C_BTNMENU ) || isPointerEscapeClicked() )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 2");
       resetBtn( C_BTNMENU );
       gamePause(screen);
       return(STATEMENU);
@@ -329,6 +339,7 @@ int runGame(SDL_Surface* screen)
     //Retry
     if( getButton( C_BTNSELECT ) || (getInpPointerState()->timeSinceMoved<POINTER_SHOW_TIMEOUT && isBoxClicked(&ptrRestartRect)) )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 3");
       resetBtn( C_BTNSELECT );
       resetMouseBtn();
       if(!restartConfirm)
@@ -343,14 +354,17 @@ int runGame(SDL_Surface* screen)
     //Handle mouse input
     if( getInpPointerState()->timeSinceMoved==0 && !cur.lock )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 4");
       setCursor(&cur, getInpPointerState()->curX,getInpPointerState()->curY );
     }
 
     if(!getInpPointerState()->isDown)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 5");
       mouseGrab=0;
       //Allow moving the cursor around with the input device when no brick is below, just for effect
     } else {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 6");
       brickType* b=brickUnderCursor(&pf, cur.x,cur.y);
 
       //We're over a brick, tell curser it's position, it will be locked later because we grab it now
@@ -386,10 +400,10 @@ int runGame(SDL_Surface* screen)
         mouseGrab=0;
       }
     }
-   //   printf("x:%i\n", getInpPointerState()->curX );
-      //Drag
+    //Drag
     if( getButton( C_BTNX ) || getButton( C_BTNB ) || mouseGrab || isPointerClicked() )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 7");
       //Remove "Restart" question
       restartConfirm=0;
 
@@ -443,34 +457,43 @@ int runGame(SDL_Surface* screen)
     }
     else
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 8");
       cur.lock=0;
     }
 
       if(!cur.lock)
       {
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 9");
         if( goLeft ) moveCursor(&cur, DIRLEFT, 0, lim);
         if( goRight ) moveCursor(&cur, DIRRIGHT, 0, lim);
         if( goUp ) moveCursor(&cur, 0, DIRUP, lim);
         if( goDown ) moveCursor(&cur, 0, DIRDOWN, lim);
       }
-
+	
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 10");
     //Sim first, so moving blocks get evaluated before getting moved again
     simField(&pf, &cur);
-
+	
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 11");
     //Do rules
     int ret=doRules(&pf);
-
+	
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 12");
     //Draw scene
     draw(&cur,&pf, screen);
 
     //Draw a path to show where we are pulling the brick
-    if( mouseGrab )
+    if( mouseGrab ) {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 13");
       drawPath( screen, getInpPointerState()->startX,getInpPointerState()->startY,getInpPointerState()->curX,getInpPointerState()->startY,1 );
-
+	}
+	
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 14");
 
     //If no more bricks, countdown time left.
     if(ret == NOBRICKSLEFT)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 15");
       if( !justWon )
       {
         sndPlay(SND_WINNER,160);
@@ -521,18 +544,22 @@ int runGame(SDL_Surface* screen)
       }
     } else if(ret > 0) //Player destroyed bricks.
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 16");
       if(ret > 2) //Check for combo's
       {
         ///TODO: Some nice text effect? How about dissolving an image into a particle system?
-        printf("%i Combo!\n",ret);
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%i Combo!\n",ret);
         player()->hsEntry.combos++;
       }
       player()->hsEntry.score += ret*ret*11*(player()->level+1);
     }
-
+	
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 17");
+	
     //if ret > -1 then ret == number of bricks destroyed
     if(ret>-1)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 18");
       //Update time:
       pf.levelInfo->time -= getTicks();
       player()->hsEntry.time += getTicks();
@@ -552,6 +579,7 @@ int runGame(SDL_Surface* screen)
     //Check if level is unsolvable.
     if(ret==UNSOLVABLE)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 19");
       countdown=2000;
       gameState=GAMESTATEUNSOLVABLE;
       if( !player()->inEditor )
@@ -562,6 +590,7 @@ int runGame(SDL_Surface* screen)
       sndPlay(SND_LOSER, 160);
     } else if(ret==LIFELOST)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 20");
       countdown=2000;
       gameState=GAMESTATELIFELOST;
 
@@ -574,21 +603,26 @@ int runGame(SDL_Surface* screen)
 
     }
 
-
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 21");
+	
     //Draw question
     if(restartConfirm)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 22");
       sprintf(buf,STR_GAME_RESTARTWARNING);
       txtWriteCenter(screen, GAMEFONTMEDIUM, buf, HSCREENW, HSCREENH-20);
       sprintf(buf,STR_GAME_RESTARTCONFIRM);
       txtWriteCenter(screen, GAMEFONTSMALL, buf, HSCREENW, HSCREENH);
     } else {
       //Draw text
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 23");
       drawUi(screen);
     }
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 24");
     //Show the restart icon
     if(getInpPointerState()->timeSinceMoved<POINTER_SHOW_TIMEOUT && getInpPointerState()->escEnable)
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 25");
       SDL_Rect ptrRestartRectC = ptrRestartRect;
       SDL_BlitSurface( ptrRestart,NULL, screen, &ptrRestartRectC );
     }
@@ -597,7 +631,7 @@ int runGame(SDL_Surface* screen)
   } else
   if(gameState==GAMESTATECOUNTDOWN)
   {
-
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 26");
     draw(&cur,&pf, screen);
     countdown -=getTicks();
 
@@ -640,6 +674,7 @@ int runGame(SDL_Surface* screen)
   } else
   if(gameState==GAMESTATEOUTOFTIME) //Menu was last in "Entering level" so it will return to that if timeout
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 27");
     draw(&cur,&pf, screen);
     //drawUi(screen);
 
@@ -665,6 +700,7 @@ int runGame(SDL_Surface* screen)
   } else
   if(gameState==GAMESTATEUNSOLVABLE) //The same as out-of-time, but with another graphics.
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 28");
     draw(&cur,&pf, screen);
     //drawUi(screen);
 
@@ -692,6 +728,7 @@ int runGame(SDL_Surface* screen)
   } else
   if(gameState==GAMESTATELIFELOST)
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 29");
     if( lostLifeMsg(&cur, &pf, screen, STR_GAME_LOSTLIFE, "lostlife-evilbrick" ) )
     {
       return(STATEMENU);
@@ -699,14 +736,14 @@ int runGame(SDL_Surface* screen)
   } else
   if(gameState==GAMESTATESTARTIMAGE)
   {
-
+SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 30");
     if(!startStopImg)
     {
       startStopImgCounter=0;
       startStopImg = loadImg( packGetFile("themes/", pf.levelInfo->startImg) );
       if(!startStopImg)
       {
-        printf("Couldn't load '%s'\n",packGetFile("themes/", pf.levelInfo->startImg));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load '%s'\n",packGetFile("themes/", pf.levelInfo->startImg));
       }
     }
 
@@ -735,7 +772,7 @@ int runGame(SDL_Surface* screen)
       startStopImg = loadImg( packGetFile("themes/", pf.levelInfo->stopImg) );
       if(!startStopImg)
       {
-        printf("Couldn't load '%s'\n",packGetFile("themes/", pf.levelInfo->stopImg));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load '%s'\n",packGetFile("themes/", pf.levelInfo->stopImg));
       }
     }
 
@@ -788,5 +825,6 @@ int runGame(SDL_Surface* screen)
     drawUi(screen);
 
   }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame end"); 
   return(STATEPLAY);
 }

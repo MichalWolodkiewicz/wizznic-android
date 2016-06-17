@@ -23,6 +23,8 @@
 #include <string.h>
 #include "bundle.h"
 #include "list/list.h"
+#include <SDL.h>
+#include "platform/androidUtils.h"
 
 #define bundleFileIdentString "<WizznicBundle>"
 #define bundleFileEndMarkString "</WizznicBundle>"
@@ -128,10 +130,10 @@ int dirScan( const char* dir,int type, list_t* list )
               fe->type=TYPE_FILE;
               strcpy( fe->name, buf );
 
-              f = fopen( buf, "rb" );
+              f = android_fopen( buf, "rb" );
               if(!f)
               {
-                printf("Could not read file %s\n", buf);
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,"Could not read file %s\n", buf);
                 return(0);
               }
 
@@ -143,14 +145,14 @@ int dirScan( const char* dir,int type, list_t* list )
               strcpy( fe->data, fe->name );
               if( fread( (void*)(((char*)fe->data)+strlen(fe->name)), fe->dataSize, 1, f ) != 1 )
               {
-                printf("Could not read input data from file '%s'.\n", fe->name);
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not read input data from file '%s'.\n", fe->name);
                 return(0);
               }
 
               listAppendData( list, (void*)fe );
             }
           } else {
-            printf("Bundles must only contain directories and regular files.\n");
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bundles must only contain directories and regular files.\n");
             return(0);
           }
 
@@ -159,7 +161,7 @@ int dirScan( const char* dir,int type, list_t* list )
     }
     return(1);
   }
-  printf("Could not open directory: %s\n",dir);
+  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,"Could not open directory: %s\n",dir);
   return(0);
 }
 
@@ -183,7 +185,7 @@ int debundleCreateEntry( bundleFileEntry* fe, const char* fileName, FILE* f )
       if( mkdir( fileName,S_IRWXU ) != 0 )
 #endif
       {
-        printf("ERROR: Could not create directory '%s'\n", fileName);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Could not create directory '%s'\n", fileName);
         retVal=BUNDLE_FAIL_NO_WRITE_PERMISSION;
       }
     } else if( fe->type==TYPE_FILE)
@@ -191,21 +193,21 @@ int debundleCreateEntry( bundleFileEntry* fe, const char* fileName, FILE* f )
       data = malloc( fe->dataLen );
       if( fread( data, fe->dataLen, 1, f) == 1 )
       {
-        wf = fopen( fileName, "wb" );
+        wf = android_fopen( fileName, "wb" );
         if( wf )
         {
           fwrite( data, fe->dataLen, 1, wf );
         } else {
-          printf("ERROR: Could not open file %s for writing.\n", fileName);
+          SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Could not open file %s for writing.\n", fileName);
           retVal = BUNDLE_FAIL_NO_WRITE_PERMISSION;
         }
       } else {
-        printf("ERROR: Could not get data for '%s'.\n", fileName);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Could not get data for '%s'.\n", fileName);
         retVal = BUNDLE_FAIL_CORRUPT;
       } //Read file data
     } //Is a file
   } else { //Exists
-    printf("ERROR: The destination file '%s' already exists.\n", fileName);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: The destination file '%s' already exists.\n", fileName);
     retVal = BUNDLE_FAIL_DIR_EXISTS;
   }
 
@@ -227,7 +229,7 @@ int debundle( const char* file, const char* outDir )
   FILE* f=NULL;
   char* name=NULL;
   char buf[2048];
-  printf("Trying to debundle %s into %s\n", file,outDir);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Trying to debundle %s into %s\n", file,outDir);
 
   bundlePathReset();
 
@@ -235,7 +237,7 @@ int debundle( const char* file, const char* outDir )
   bundleFileEntry* fe=NULL;
 
   //Open file
-  f = fopen( file, "rb");
+  f = android_fopen( file, "rb");
   if(f)
   {
     //Read header
@@ -251,7 +253,7 @@ int debundle( const char* file, const char* outDir )
           {
             swapBytes = 0;
           } else {
-            printf("Bundle has opposite byte-order, converting.\n");
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Bundle has opposite byte-order, converting.\n");
             swapBundleHeader(&header);
             swapBytes = 1;
           }
@@ -303,7 +305,7 @@ int debundle( const char* file, const char* outDir )
                   } //Entry was created
 
                 } else { //Read name
-                    printf("  ERROR: Could not read a filename from bundlefile.\n");
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "  ERROR: Could not read a filename from bundlefile.\n");
                     ret = BUNDLE_FAIL_CORRUPT;
                 } //Could not read name
               } //Type check
@@ -315,34 +317,34 @@ int debundle( const char* file, const char* outDir )
               memset( buf, 0, strlen(bundleFileEndMarkString)+1 );
               if( fread(buf, strlen(bundleFileEndMarkString), 1, f) != 1 )
               {
-                printf("ERROR: Could not read end of file marker.\n");
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Could not read end of file marker.\n");
                 ret = BUNDLE_FAIL_CORRUPT;
               } else if( strcmp(buf, bundleFileEndMarkString) != 0 )
               {
-                printf("ERROR: Expected to read '%s' but got '%s'.\n", bundleFileEndMarkString, buf);
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Expected to read '%s' but got '%s'.\n", bundleFileEndMarkString, buf);
                 ret = BUNDLE_FAIL_CORRUPT;
               }
             }
           } else {
-            printf("ERROR: Could not read %i entries from file.\n", header.numEntries);
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Could not read %i entries from file.\n", header.numEntries);
             ret = BUNDLE_FAIL_CORRUPT;
           } // Read all the entries into an array
 
         } else { //Version 0x10
-          printf("Error: Bundle File version %i is unsupported by this version of Wizznic.\n", header.version );
+          SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Bundle File version %i is unsupported by this version of Wizznic.\n", header.version );
           ret = BUNDLE_FAIL_UNSUPPORTED_VERSION;
         } //Unknown version
       } else { // Read ident string
-        printf("ERROR: File %s is not a Wizznic Bundle file.\n", file);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: File %s is not a Wizznic Bundle file.\n", file);
         ret = BUNDLE_FAIL_NOT_BUNDLEFILE;
       }
     } else { // < Read header
-      printf("ERROR: File %s is not a Wizznic Bundle file.\n", file);
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: File %s is not a Wizznic Bundle file.\n", file);
       ret = BUNDLE_FAIL_NOT_BUNDLEFILE;
     }
   } else {
     ret = BUNDLE_FAIL_COULD_NOT_OPEN;
-    printf("Could not open file '%s' for input.\n", file);
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not open file '%s' for input.\n", file);
   }
 
   //Free resources
@@ -378,25 +380,25 @@ void bundle( const char* file, const char* inDir)
   e->type = TYPE_DIR;
   listAppendData( entryList, (void*)e );
 
-  printf("Listing directories...\n");
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Listing directories...\n");
   if( dirScan( inDir, TYPE_DIR, entryList ) )
   {
     header.numEntries = entryList->count;
-    printf("Added %i directories.\n", header.numEntries );
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Added %i directories.\n", header.numEntries );
 
-    printf("Listing files...\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Listing files...\n");
     if( dirScan( inDir, TYPE_FILE, entryList ) )
     {
-      printf("Added %i files.\n", (entryList->count - header.numEntries) );
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Added %i files.\n", (entryList->count - header.numEntries) );
       header.numEntries = entryList->count;
-      printf("There are now %i entries.\n", header.numEntries);
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "There are now %i entries.\n", header.numEntries);
       //First dataoffset is after the list of all entries
       dataOffset = sizeof(bundleHeader_t) + (sizeof(bundleFileEntry)*header.numEntries);
 
 
-      printf("Bundling...\n");
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Bundling...\n");
 
-      f = fopen( file, "wb" );
+      f = android_fopen( file, "wb" );
 
       if(f)
       {
@@ -441,13 +443,13 @@ void bundle( const char* file, const char* inDir)
           if( e->type == TYPE_DIR )
           {
             fwrite( e->name, strlen(e->name), 1, f);
-            printf("Added Dir: %s\n", e->name);
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Added Dir: %s\n", e->name);
           }
           //If it's a file, write content
           if( e->type == TYPE_FILE )
           {
             fwrite( e->data, e->dataSize+strlen(e->name), 1, f);
-            printf("Added File: %s\n", e->name);
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Added File: %s\n", e->name);
           }
         }
 
@@ -456,13 +458,13 @@ void bundle( const char* file, const char* inDir)
         fclose(f);
 
       } else {
-        printf("Could not open outputfile %s for writing.\n", file);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not open outputfile %s for writing.\n", file);
       }
     } else {
-      printf("fileScan of %s failed.\n", inDir);
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "fileScan of %s failed.\n", inDir);
     }
   } else {
-    printf("dirScan of %s failed.\n", inDir);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "dirScan of %s failed.\n", inDir);
   }
 }
 

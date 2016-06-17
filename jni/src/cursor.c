@@ -32,7 +32,6 @@ void setCursor(cursorType* c, int x, int y)
 
 void updateCursor(cursorType* c)
 {
-  //printf("Cur: (%i,%i) Dst: (%i,%i) Lock: %i\n",c->x,c->y,c->dx,c->dy, c->lock);
   int destX = c->dx*brickSize+boardOffsetX-4;
   int destY = c->dy*brickSize+boardOffsetY-4;
 

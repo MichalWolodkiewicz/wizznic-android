@@ -436,7 +436,7 @@ int runMenu(SDL_Surface* screen)
             return(STATEPLAY);
           }
         } else {
-          printf("Fatal: Couldn't init game. \n");
+          SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Fatal: Couldn't init game. \n");
           return(STATEQUIT);
         }
       }
@@ -819,7 +819,7 @@ int runMenu(SDL_Surface* screen)
             packState()->finishedImg = loadImg( packGetFile("./","finished.png" ) );
             if( !packState()->finishedImg )
             {
-              printf("Error: Can't load pack-finished file '%s'\n", packGetFile("./","finished.png" ) );
+              SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ERROR: Can't load pack-finished file '%s'\n", packGetFile("./","finished.png" ) );
               return(STATEQUIT);
             }
           }
@@ -1105,7 +1105,7 @@ int runMenu(SDL_Surface* screen)
                 startTransition(screen, TRANSITION_TYPE_ROLL_OUT, 500 );
                 return(STATEPLAY);
               } else {
-                printf("Editor couldn't init game for the editor.\n");
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Editor couldn't init game for the editor.\n");
                 return(STATEQUIT);
               }
             }
@@ -1259,7 +1259,7 @@ int runMenu(SDL_Surface* screen)
 
               //Set selected pack.
               packSet(menuPosY);
-              printf("Selected pack number: %i\n", menuPosY);
+              SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Selected pack number: %i\n", menuPosY);
 
               //Save setting
               free( setting()->packDir);
@@ -1642,7 +1642,7 @@ int runMenu(SDL_Surface* screen)
                   #endif
                   nmd = strncpy( nmd, setting()->musicDir, charrpos( setting()->musicDir, DELIMCHAR ) );
                   nmd[charrpos( setting()->musicDir, DELIMCHAR )] = 0;
-                  printf("Went from '%s' to '%s'\n", setting()->musicDir, nmd);
+                  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Went from '%s' to '%s'\n", setting()->musicDir, nmd);
                   free( setting()->musicDir );
                   setting()->musicDir = nmd;
                 } else {

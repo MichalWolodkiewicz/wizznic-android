@@ -22,8 +22,7 @@
 #include "strings.h"
 #include "teleport.h"
 #include "pack.h"
-
-
+#include "platform/androidUtils.h"
 #include "userfiles.h"
 
 static list_t* userLevelFiles;
@@ -39,7 +38,7 @@ levelInfo_t* mkLevelInfo(const char* fileName)
   char* val = malloc(sizeof(char)*128); //Buffer for storing value
 
   tl=0; //Return null ptr if no file is found (malloc won't get called then)
-  f = fopen(fileName, "r");
+  f = android_fopen(fileName, "r");
   if(f)
   {
     //Allocate memory for level info.
@@ -259,7 +258,7 @@ list_t* makeLevelList(const char* dir)
   tl=malloc(sizeof(levelInfo_t));
   memset(tl, 0, sizeof(levelInfo_t));
 
-  sprintf( buf, packGetFile(".","complete.png"),dir );
+  sprintf( buf, packGetFile(NULL,"complete.png"),dir );
   tl->imgFile = malloc( sizeof(char)*(strlen(buf)+1) );
   strcpy(tl->imgFile, buf);
 
@@ -329,13 +328,13 @@ void addUserLevel(const char* fn)
   {
     listAppendData(userLevelFiles, (void*)tl);
   } else {
-    printf("Strange error, couldn't open saved level.\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Strange error, couldn't open saved level.\n");
   }
 }
 
 char* userLevelFile(int num)
 {
-  printf("Asked for userLevelFile: %i\n", num);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Asked for userLevelFile: %i\n", num);
 
   listItem* it = listGetItemAt(userLevelFiles,num);
   if( it )
@@ -343,7 +342,7 @@ char* userLevelFile(int num)
     levelInfo_t* linfo = (levelInfo_t*)it->data;
     return(linfo->file);
   } else {
-    printf("Something wrong..\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Something wrong..\n");
   }
 
     return(NULL);

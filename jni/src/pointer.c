@@ -37,7 +37,7 @@ void initPointer(SDL_Surface* screen)
   //Load the "escape" overlay image
   ptrBackImg = loadImg("data/ptr-back.png");
   if( !ptrBackImg )
-    printf("Couldn't open %s\n","data/ptr-back.png");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't open %s\n","data/ptr-back.png");
 
   ptrBackRect.x=HSCREENW-160;;
   ptrBackRect.y=HSCREENH-120;;
