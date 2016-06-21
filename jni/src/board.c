@@ -49,7 +49,6 @@ void dumpBrickTypes(playField* pf)
 {
 }
 
-
 void setWallType(playField* pf, int x, int y)
 {
   pf->board[x][y]->edges=0;
@@ -863,15 +862,6 @@ int onTopOfReserved(playField* pf, int x, int y)
   return( (y+1 < FIELDSIZE && pf->board[x][y+1] && pf->board[x][y+1]->type == RESERVED) );
 }
 
-void printListInfo(list_t *l) {
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "xxxxxx list size = %d", l->count);
-		int i = 0;
-		for(;i<l->count;i++) {
-			brickType* b = (brickType*)listGetItemAt(l, i);
-			SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "xxxxxx b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
-		}
-};
-
 int doRules(playField* pf)
 {
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- doRules begin -----");
@@ -942,10 +932,9 @@ int doRules(playField* pf)
   //Remove ones that need removed
   li=&pf->removeList->begin;
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 start  -----");
-  while( pf->removeList->count > 0 && LISTFWD(pf->removeList, li))
+  while( LISTFWD(pf->removeList, li))
   {
-	  printListInfo(pf->removeList);
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 ... count = %d-----", pf->removeList->count);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 ... count = %d-----", pf->removeList->count);
     //Count dying bricks as alive until they are really removed
     bricksLeft++;
     b=(brickType*)li->data;
@@ -960,12 +949,6 @@ int doRules(playField* pf)
       b->tl=pf->levelInfo->brick_die_ticks;
 	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 4  -----");
       //Reserve, to prevent bricks from falling into the animation
-	  if(pf->blocker != NULL) {
-		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- pf->blocker != NULL  -----");
-	  }
-	  if(b != NULL) {
-		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- b != NULL  -----");
-	  }
 	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
 	  // problem here
       pf->board[b->dx][b->dy]=pf->blocker;
@@ -989,6 +972,7 @@ int doRules(playField* pf)
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 12  -----");
         //Remove from list
         listRemoveItem(pf->removeList, li, LIST_NEXT);
+		li=&pf->removeList->begin;
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 13  -----");
       }
     }
