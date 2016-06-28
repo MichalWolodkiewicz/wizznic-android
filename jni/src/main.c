@@ -110,7 +110,10 @@ int main(int argc, char *argv[]) {
   SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer,
                                             SDL_PIXELFORMAT_ARGB8888,
                                             SDL_TEXTUREACCESS_STREAMING,
-                                            1024, 600);
+                                            320, 240);
+  
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
+  SDL_RenderSetLogicalSize(sdlRenderer, 320, 240);
   
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "Parameters passed ok.");
 
