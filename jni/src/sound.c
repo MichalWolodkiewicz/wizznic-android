@@ -71,6 +71,11 @@ int initSound()
 
 int loadSample(const char* fileName, int index)
 {
+	#ifdef OGG_MUSIC
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "OGG_MUSIC is defined");
+	#else
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "OGG_MUSIC is not defined");
+    #endif
   lastPlayed[index]=0;
 #ifdef DEBUG
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "loadSample(); Open: %s\n", fileName);
@@ -78,7 +83,7 @@ int loadSample(const char* fileName, int index)
   //Check if we should load it
   if(!loadedSamples[index] || strcmp(loadedSamples[index], fileName)!=0)
   {
-    //printf("loadSample: %s not loaded before, loading it now...\n", fileName);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "loadSample: %s not loaded before, loading it now...\n", fileName);
     //Free string memory if used previously.
     if(loadedSamples[index])
       free(loadedSamples[index]);
@@ -96,7 +101,8 @@ int loadSample(const char* fileName, int index)
     if(!samples[index])
     {
       SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "loadSample(); Warning: Couldn't load %s\n",fileName);
-      return(0);
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "%s", SDL_GetError());
+	  return(0);
     }
   }
 
