@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="com.qnx.qcc.configuration.sharedLib.debug.1805459931">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.qnx.qcc.configuration.sharedLib.debug.1805459931" moduleId="org.eclipse.cdt.core.settings" name="Device-Debug">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/SDL2_mixer"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/SDL2_mixer/Device-Debug"/>
+						<entry flags="" kind="libraryFile" name="SDL2_mixer"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="SDL2_mixer"/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="com.qnx.tools.ide.qde.core.QDEBynaryParser" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.qnx.tools.ide.qde.core.QDELinkerErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" description="" id="com.qnx.qcc.configuration.sharedLib.debug.1805459931" name="Device-Debug" parent="com.qnx.qcc.configuration.sharedLib.debug">
+					<folderInfo id="com.qnx.qcc.configuration.sharedLib.debug.1805459931." name="/" resourcePath="">
+						<toolChain id="com.qnx.qcc.toolChain.sharedLib.debug.1269084971" name="QNX QCC" superClass="com.qnx.qcc.toolChain">
+							<option id="com.qnx.qcc.option.cpu.1231368339" name="Target CPU:" superClass="com.qnx.qcc.option.cpu" value="com.qnx.qcc.option.gen.cpu.armle-v7" valueType="enumerated"/>
+							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.1787164682" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
+							<builder buildPath="${workspace_loc:/SDL2_mixer/Device-Debug}" id="com.qnx.nto.1134388546" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="com.qnx.nto"/>
+							<tool id="com.qnx.qcc.tool.compiler.727255928" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
+								<option id="com.qnx.qcc.option.compiler.shared.197478589" name="Shared (-shared)" superClass="com.qnx.qcc.option.compiler.shared" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.1870513647" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compile.debug.974323593" name="Debug (-g)" superClass="com.qnx.qcc.option.compile.debug" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.includePath.122226200" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/usr/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SDL2/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/external/libogg-1.3.1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/external/libvorbisidec-1.2.1}&quot;"/>
+								</option>
+								<option id="com.qnx.qcc.option.compiler.security.1202164310" name="Enhanced Security (-fstack-protector-all)" superClass="com.qnx.qcc.option.compiler.security" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.defines.1613764546" name="Defines (-D)" superClass="com.qnx.qcc.option.compiler.defines" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_FORTIFY_SOURCE=2"/>
+									<listOptionValue builtIn="false" value="__BLACKBERRY__"/>
+									<listOptionValue builtIn="false" value="__BLACKBERRY_DEBUG__"/>
+									<listOptionValue builtIn="false" value="__PLAYBOOK__"/>
+									<listOptionValue builtIn="false" value="WAV_MUSIC"/>
+									<listOptionValue builtIn="false" value="OGG_MUSIC"/>
+									<listOptionValue builtIn="false" value="OGG_USE_TREMOR"/>
+									<listOptionValue builtIn="false" value="_ARM_ASSEM_"/>
+								</option>
+								<option id="com.qnx.qcc.option.compiler.qccoptions.762472039" name="QCC Options" superClass="com.qnx.qcc.option.compiler.qccoptions" valueType="stringList"/>
+								<inputType id="com.qnx.qcc.inputType.compiler.2031972545" superClass="com.qnx.qcc.inputType.compiler"/>
+							</tool>
+							<tool id="com.qnx.qcc.tool.assembler.1442388516" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
+								<option id="com.qnx.qcc.option.assembler.debug.142578309" name="Debug (-g)" superClass="com.qnx.qcc.option.assembler.debug" value="true" valueType="boolean"/>
+								<inputType id="com.qnx.qcc.inputType.assembler.1496647710" superClass="com.qnx.qcc.inputType.assembler"/>
+							</tool>
+							<tool id="com.qnx.qcc.tool.linker.1563720949" name="QCC Linker" superClass="com.qnx.qcc.tool.linker">
+								<option id="com.qnx.qcc.option.linker.debug.372513551" name="Debug (-g)" superClass="com.qnx.qcc.option.linker.debug" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.linker.shared.448698643" name="Shared (-shared)" superClass="com.qnx.qcc.option.linker.shared" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.linker.libraryPaths.1659565445" name="Library Paths (-L)" superClass="com.qnx.qcc.option.linker.libraryPaths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/${CPUVARDIR}/lib"/>
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/${CPUVARDIR}/usr/lib"/>
+								</option>
+								<option id="com.qnx.qcc.option.linker.security.1481585720" name="Enhanced Security (-Wl,-z,relro -Wl,-z,now)" superClass="com.qnx.qcc.option.linker.security" value="true" valueType="boolean"/>
+								<inputType id="com.qnx.qcc.inputType.linker.440827707" superClass="com.qnx.qcc.inputType.linker">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="com.qnx.qcc.tool.archiver.1168736033" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding=".git/|acinclude/|BlackBerry/|build-scripts/|debian/|native_midi/|timidity/|VisualC/|Xcode/|Xcode-iOS/|.hgignore|.hgtags|aclocal.m4|Android.mk|autogen.sh|CHANGES.txt|configure|configure.in|COPYING.txt|dynamic_flac.c|dynamic_flac.h|dynamic_fluidsynth.c|dynamic_fluidsynth.h|dynamic_mod.c|dynamic_mod.h|dynamic_modplug.c|dynamic_modplug.h|dynamic_mp3.c|dynamic_mp3.h|gcc-fat.sh|load_flac.c|load_flac.h|load_mp3.c|load_mp3.h|Makefile.in|music_cmd.c|music_cmd.h|music_flac.c|music_flac.h|music_mad.c|music_mad.h|music_mod.c|music_mod.h|music_modplug.c|music_modplug.h|README.txt|SDL2_mixer.pc.in|SDL2_mixer.spec|SDL2_mixer.spec.in|version.rc|playmus.c|playwave.c|external/flac-1.2.1/|external/libmikmod-3.1.12/|external/libmikmod-patches/|external/libmodplug-0.8.8.4/|external/libvorbis-1.3.3/|external/libvorbisidec-1.2.1/acinclude/|external/libvorbisidec-1.2.1/doc/|external/libvorbisidec-1.2.1/win32/|external/libvorbisidec-1.2.1/aclocal.m4|external/libvorbisidec-1.2.1/config.guess|external/libvorbisidec-1.2.1/config.h.in|external/libvorbisidec-1.2.1/config.sub|external/libvorbisidec-1.2.1/configure|external/libvorbisidec-1.2.1/configure.in|external/libvorbisidec-1.2.1/COPYING|external/libvorbisidec-1.2.1/depcomp|external/libvorbisidec-1.2.1/install-sh|external/libvorbisidec-1.2.1/iseeking_example.c|external/libvorbisidec-1.2.1/ivorbisfile_example.c|external/libvorbisidec-1.2.1/ltmain.sh|external/libvorbisidec-1.2.1/Makefile.am|external/libvorbisidec-1.2.1/Makefile.in|external/libvorbisidec-1.2.1/missing|external/libvorbisidec-1.2.1/README|external/libvorbisidec-1.2.1/Version_script.in|external/libvorbisidec-1.2.1/vorbisidec.pc.in|external/smpeg2-2.0.0/|external/flac-1.2.1.patch|external/libvorbis-1.3.3.patch|external/libvorbisidec-1.2.1.patch|external/libogg-1.3.1/doc/|external/libogg-1.3.1/include/ogg/config_types.h.in|external/libogg-1.3.1/include/ogg/Makefile.am|external/libogg-1.3.1/include/ogg/Makefile.in|external/libogg-1.3.1/include/Makefile.am|external/libogg-1.3.1/include/Makefile.in|external/libogg-1.3.1/macosx/|external/libogg-1.3.1/src/Makefile.am|external/libogg-1.3.1/src/Makefile.in|external/libogg-1.3.1/win32/|external/libogg-1.3.1/aclocal.m4|external/libogg-1.3.1/AUTHORS|external/libogg-1.3.1/CHANGES|external/libogg-1.3.1/compile|external/libogg-1.3.1/config.guess|external/libogg-1.3.1/config.h.in|external/libogg-1.3.1/config.sub|external/libogg-1.3.1/configure|external/libogg-1.3.1/configure.in|external/libogg-1.3.1/COPYING|external/libogg-1.3.1/depcomp|external/libogg-1.3.1/install-sh|external/libogg-1.3.1/libogg.spec|external/libogg-1.3.1/libogg.spec.in|external/libogg-1.3.1/ltmain.sh|external/libogg-1.3.1/Makefile.am|external/libogg-1.3.1/Makefile.in|external/libogg-1.3.1/missing|external/libogg-1.3.1/ogg-uninstalled.pc.in|external/libogg-1.3.1/ogg.m4|external/libogg-1.3.1/ogg.pc.in|external/libogg-1.3.1/README" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="com.qnx.qcc.configuration.sharedLib.release.474706968">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.qnx.qcc.configuration.sharedLib.release.474706968" moduleId="org.eclipse.cdt.core.settings" name="Device-Release">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/SDL2_mixer"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/SDL2_mixer/Device-Release"/>
+						<entry flags="" kind="libraryFile" name="SDL2_mixer"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="SDL2_mixer"/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="com.qnx.tools.ide.qde.core.QDEBynaryParser" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.qnx.tools.ide.qde.core.QDELinkerErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" description="" id="com.qnx.qcc.configuration.sharedLib.release.474706968" name="Device-Release" parent="com.qnx.qcc.configuration.sharedLib.release">
+					<folderInfo id="com.qnx.qcc.configuration.sharedLib.release.474706968." name="/" resourcePath="">
+						<toolChain id="com.qnx.qcc.toolChain.sharedLib.release.603950338" name="QNX QCC" superClass="com.qnx.qcc.toolChain">
+							<option id="com.qnx.qcc.option.cpu.1869624257" name="Target CPU:" superClass="com.qnx.qcc.option.cpu" value="com.qnx.qcc.option.gen.cpu.armle-v7" valueType="enumerated"/>
+							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.556221983" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
+							<builder buildPath="${workspace_loc:/SDL2_mixer/Device-Release}" id="com.qnx.nto.1468078627" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="com.qnx.nto"/>
+							<tool id="com.qnx.qcc.tool.compiler.353359566" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
+								<option id="com.qnx.qcc.option.compiler.shared.928445373" name="Shared (-shared)" superClass="com.qnx.qcc.option.compiler.shared" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.311543037" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.2" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compiler.includePath.852196595" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/usr/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SDL2/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/external/libogg-1.3.1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/external/libvorbisidec-1.2.1}&quot;"/>
+								</option>
+								<option id="com.qnx.qcc.option.compiler.security.249428345" name="Enhanced Security (-fstack-protector-all)" superClass="com.qnx.qcc.option.compiler.security" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.defines.1877909989" name="Defines (-D)" superClass="com.qnx.qcc.option.compiler.defines" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_FORTIFY_SOURCE=2"/>
+									<listOptionValue builtIn="false" value="__BLACKBERRY__"/>
+									<listOptionValue builtIn="false" value="__PLAYBOOK__"/>
+									<listOptionValue builtIn="false" value="WAV_MUSIC"/>
+									<listOptionValue builtIn="false" value="OGG_MUSIC"/>
+									<listOptionValue builtIn="false" value="OGG_USE_TREMOR"/>
+									<listOptionValue builtIn="false" value="_ARM_ASSEM_"/>
+								</option>
+								<option id="com.qnx.qcc.option.compiler.qccoptions.1924077323" name="QCC Options" superClass="com.qnx.qcc.option.compiler.qccoptions" valueType="stringList">
+									<listOptionValue builtIn="false" value="-frecord-gcc-switches"/>
+								</option>
+								<inputType id="com.qnx.qcc.inputType.compiler.610091841" superClass="com.qnx.qcc.inputType.compiler"/>
+							</tool>
+							<tool id="com.qnx.qcc.tool.assembler.281995621" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
+								<inputType id="com.qnx.qcc.inputType.assembler.1644142532" superClass="com.qnx.qcc.inputType.assembler"/>
+							</tool>
+							<tool id="com.qnx.qcc.tool.linker.61688870" name="QCC Linker" superClass="com.qnx.qcc.tool.linker">
+								<option id="com.qnx.qcc.option.linker.shared.1162764043" name="Shared (-shared)" superClass="com.qnx.qcc.option.linker.shared" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.linker.libraryPaths.1664260019" name="Library Paths (-L)" superClass="com.qnx.qcc.option.linker.libraryPaths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/${CPUVARDIR}/lib"/>
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/${CPUVARDIR}/usr/lib"/>
+								</option>
+								<option id="com.qnx.qcc.option.linker.security.770095334" name="Enhanced Security (-Wl,-z,relro -Wl,-z,now)" superClass="com.qnx.qcc.option.linker.security" value="true" valueType="boolean"/>
+								<inputType id="com.qnx.qcc.inputType.linker.1238552437" superClass="com.qnx.qcc.inputType.linker">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="com.qnx.qcc.tool.archiver.211373996" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding=".git/|acinclude/|BlackBerry/|build-scripts/|debian/|native_midi/|timidity/|VisualC/|Xcode/|Xcode-iOS/|.hgignore|.hgtags|aclocal.m4|Android.mk|autogen.sh|CHANGES.txt|configure|configure.in|COPYING.txt|dynamic_flac.c|dynamic_flac.h|dynamic_fluidsynth.c|dynamic_fluidsynth.h|dynamic_mod.c|dynamic_mod.h|dynamic_modplug.c|dynamic_modplug.h|dynamic_mp3.c|dynamic_mp3.h|gcc-fat.sh|load_flac.c|load_flac.h|load_mp3.c|load_mp3.h|Makefile.in|music_cmd.c|music_cmd.h|music_flac.c|music_flac.h|music_mad.c|music_mad.h|music_mod.c|music_mod.h|music_modplug.c|music_modplug.h|README.txt|SDL2_mixer.pc.in|SDL2_mixer.spec|SDL2_mixer.spec.in|version.rc|playmus.c|playwave.c|external/flac-1.2.1/|external/libmikmod-3.1.12/|external/libmikmod-patches/|external/libmodplug-0.8.8.4/|external/libvorbis-1.3.3/|external/libvorbisidec-1.2.1/acinclude/|external/libvorbisidec-1.2.1/doc/|external/libvorbisidec-1.2.1/win32/|external/libvorbisidec-1.2.1/aclocal.m4|external/libvorbisidec-1.2.1/config.guess|external/libvorbisidec-1.2.1/config.h.in|external/libvorbisidec-1.2.1/config.sub|external/libvorbisidec-1.2.1/configure|external/libvorbisidec-1.2.1/configure.in|external/libvorbisidec-1.2.1/COPYING|external/libvorbisidec-1.2.1/depcomp|external/libvorbisidec-1.2.1/install-sh|external/libvorbisidec-1.2.1/iseeking_example.c|external/libvorbisidec-1.2.1/ivorbisfile_example.c|external/libvorbisidec-1.2.1/ltmain.sh|external/libvorbisidec-1.2.1/Makefile.am|external/libvorbisidec-1.2.1/Makefile.in|external/libvorbisidec-1.2.1/missing|external/libvorbisidec-1.2.1/README|external/libvorbisidec-1.2.1/Version_script.in|external/libvorbisidec-1.2.1/vorbisidec.pc.in|external/smpeg2-2.0.0/|external/flac-1.2.1.patch|external/libvorbis-1.3.3.patch|external/libvorbisidec-1.2.1.patch|external/libogg-1.3.1/doc/|external/libogg-1.3.1/include/ogg/config_types.h.in|external/libogg-1.3.1/include/ogg/Makefile.am|external/libogg-1.3.1/include/ogg/Makefile.in|external/libogg-1.3.1/include/Makefile.am|external/libogg-1.3.1/include/Makefile.in|external/libogg-1.3.1/macosx/|external/libogg-1.3.1/src/Makefile.am|external/libogg-1.3.1/src/Makefile.in|external/libogg-1.3.1/win32/|external/libogg-1.3.1/aclocal.m4|external/libogg-1.3.1/AUTHORS|external/libogg-1.3.1/CHANGES|external/libogg-1.3.1/compile|external/libogg-1.3.1/config.guess|external/libogg-1.3.1/config.h.in|external/libogg-1.3.1/config.sub|external/libogg-1.3.1/configure|external/libogg-1.3.1/configure.in|external/libogg-1.3.1/COPYING|external/libogg-1.3.1/depcomp|external/libogg-1.3.1/install-sh|external/libogg-1.3.1/libogg.spec|external/libogg-1.3.1/libogg.spec.in|external/libogg-1.3.1/ltmain.sh|external/libogg-1.3.1/Makefile.am|external/libogg-1.3.1/Makefile.in|external/libogg-1.3.1/missing|external/libogg-1.3.1/ogg-uninstalled.pc.in|external/libogg-1.3.1/ogg.m4|external/libogg-1.3.1/ogg.pc.in|external/libogg-1.3.1/README" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="com.qnx.qcc.configuration.sharedLib.profile.819769294">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.qnx.qcc.configuration.sharedLib.profile.819769294" moduleId="org.eclipse.cdt.core.settings" name="Simulator-Profile">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/SDL2_mixer"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/SDL2_mixer/Simulator-Profile"/>
+						<entry flags="" kind="libraryFile" name="SDL2_mixer"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="SDL2_mixer"/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="com.qnx.tools.ide.qde.core.QDEBynaryParser" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.qnx.tools.ide.qde.core.QDELinkerErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=com.qnx.buildType.profile,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" description="Build for Profiling" id="com.qnx.qcc.configuration.sharedLib.profile.819769294" name="Simulator-Profile" parent="com.qnx.qcc.configuration.sharedLib.profile">
+					<folderInfo id="com.qnx.qcc.configuration.sharedLib.profile.819769294." name="/" resourcePath="">
+						<toolChain id="com.qnx.qcc.toolChain.sharedLib.profile.763453426" name="QNX QCC" superClass="com.qnx.qcc.toolChain">
+							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.530511380" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
+							<builder buildPath="${workspace_loc:/SDL2_mixer/Simulator-Profile}" id="com.qnx.nto.2789108" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="com.qnx.nto"/>
+							<tool id="com.qnx.qcc.tool.compiler.1965858874" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
+								<option id="com.qnx.qcc.option.compiler.shared.1810302459" name="Shared (-shared)" superClass="com.qnx.qcc.option.compiler.shared" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.557739391" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compile.debug.2039730369" name="Debug (-g)" superClass="com.qnx.qcc.option.compile.debug" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.profile2.1190063530" name="Build for Profiling (Function Instrumentation) (-finstrument-functions)" superClass="com.qnx.qcc.option.compiler.profile2" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.includePath.1212889730" name="Include Directories (-I)" superClass="com.qnx.qcc.option.compiler.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/usr/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SDL2/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/external/libogg-1.3.1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/external/libvorbisidec-1.2.1}&quot;"/>
+								</option>
+								<option id="com.qnx.qcc.option.compiler.security.1299391970" name="Enhanced Security (-fstack-protector-all)" superClass="com.qnx.qcc.option.compiler.security" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.compiler.defines.2114113924" name="Defines (-D)" superClass="com.qnx.qcc.option.compiler.defines" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_FORTIFY_SOURCE=2"/>
+									<listOptionValue builtIn="false" value="__BLACKBERRY__"/>
+									<listOptionValue builtIn="false" value="__BLACKBERRY_DEBUG__"/>
+									<listOptionValue builtIn="false" value="__BLACKBERRY_SIMULATOR__"/>
+									<listOptionValue builtIn="false" value="__PLAYBOOK__"/>
+									<listOptionValue builtIn="false" value="WAV_MUSIC"/>
+									<listOptionValue builtIn="false" value="OGG_MUSIC"/>
+									<listOptionValue builtIn="false" value="OGG_USE_TREMOR"/>
+								</option>
+								<inputType id="com.qnx.qcc.inputType.compiler.2060379758" superClass="com.qnx.qcc.inputType.compiler"/>
+							</tool>
+							<tool id="com.qnx.qcc.tool.assembler.1279858092" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
+								<option id="com.qnx.qcc.option.assembler.debug.1418738786" name="Debug (-g)" superClass="com.qnx.qcc.option.assembler.debug" value="true" valueType="boolean"/>
+								<inputType id="com.qnx.qcc.inputType.assembler.1196964231" superClass="com.qnx.qcc.inputType.assembler"/>
+							</tool>
+							<tool id="com.qnx.qcc.tool.linker.1538456133" name="QCC Linker" superClass="com.qnx.qcc.tool.linker">
+								<option id="com.qnx.qcc.option.linker.debug.956442586" name="Debug (-g)" superClass="com.qnx.qcc.option.linker.debug" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.linker.profile2.2031428929" name="Build for Profiling (Function Instrumentation) (-lprofiling)" superClass="com.qnx.qcc.option.linker.profile2" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.linker.shared.662885663" name="Shared (-shared)" superClass="com.qnx.qcc.option.linker.shared" value="true" valueType="boolean"/>
+								<option id="com.qnx.qcc.option.linker.libraryPaths.1654502814" name="Library Paths (-L)" superClass="com.qnx.qcc.option.linker.libraryPaths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/${CPUVARDIR}/lib"/>
+									<listOptionValue builtIn="false" value="${QNX_TARGET}/../target-override/${CPUVARDIR}/usr/lib"/>
+								</option>
+								<option id="com.qnx.qcc.option.linker.security.1922032212" name="Enhanced Security (-Wl,-z,relro -Wl,-z,now)" superClass="com.qnx.qcc.option.linker.security" value="true" valueType="boolean"/>
+								<inputType id="com.qnx.qcc.inputType.linker.82141097" superClass="com.qnx.qcc.inputType.linker">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="com.qnx.qcc.tool.archiver.1830380746" name="QCC Archiver" superClass="com.qnx.qcc.tool.archiver"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding=".git/|acinclude/|BlackBerry/|build-scripts/|debian/|native_midi/|timidity/|VisualC/|Xcode/|Xcode-iOS/|.hgignore|.hgtags|aclocal.m4|Android.mk|autogen.sh|CHANGES.txt|configure|configure.in|COPYING.txt|dynamic_flac.c|dynamic_flac.h|dynamic_fluidsynth.c|dynamic_fluidsynth.h|dynamic_mod.c|dynamic_mod.h|dynamic_modplug.c|dynamic_modplug.h|dynamic_mp3.c|dynamic_mp3.h|gcc-fat.sh|load_flac.c|load_flac.h|load_mp3.c|load_mp3.h|Makefile.in|music_cmd.c|music_cmd.h|music_flac.c|music_flac.h|music_mad.c|music_mad.h|music_mod.c|music_mod.h|music_modplug.c|music_modplug.h|README.txt|SDL2_mixer.pc.in|SDL2_mixer.spec|SDL2_mixer.spec.in|version.rc|playmus.c|playwave.c|external/flac-1.2.1/|external/libmikmod-3.1.12/|external/libmikmod-patches/|external/libmodplug-0.8.8.4/|external/libvorbis-1.3.3/|external/libvorbisidec-1.2.1/acinclude/|external/libvorbisidec-1.2.1/doc/|external/libvorbisidec-1.2.1/win32/|external/libvorbisidec-1.2.1/aclocal.m4|external/libvorbisidec-1.2.1/config.guess|external/libvorbisidec-1.2.1/config.h.in|external/libvorbisidec-1.2.1/config.sub|external/libvorbisidec-1.2.1/configure|external/libvorbisidec-1.2.1/configure.in|external/libvorbisidec-1.2.1/COPYING|external/libvorbisidec-1.2.1/depcomp|external/libvorbisidec-1.2.1/install-sh|external/libvorbisidec-1.2.1/iseeking_example.c|external/libvorbisidec-1.2.1/ivorbisfile_example.c|external/libvorbisidec-1.2.1/ltmain.sh|external/libvorbisidec-1.2.1/Makefile.am|external/libvorbisidec-1.2.1/Makefile.in|external/libvorbisidec-1.2.1/missing|external/libvorbisidec-1.2.1/README|external/libvorbisidec-1.2.1/Version_script.in|external/libvorbisidec-1.2.1/vorbisidec.pc.in|external/smpeg2-2.0.0/|external/flac-1.2.1.patch|external/libvorbis-1.3.3.patch|external/libvorbisidec-1.2.1.patch|external/libogg-1.3.1/doc/|external/libogg-1.3.1/include/ogg/config_types.h.in|external/libogg-1.3.1/include/ogg/Makefile.am|external/libogg-1.3.1/include/ogg/Makefile.in|external/libogg-1.3.1/include/Makefile.am|external/libogg-1.3.1/include/Makefile.in|external/libogg-1.3.1/macosx/|external/libogg-1.3.1/src/Makefile.am|external/libogg-1.3.1/src/Makefile.in|external/libogg-1.3.1/win32/|external/libogg-1.3.1/aclocal.m4|external/libogg-1.3.1/AUTHORS|external/libogg-1.3.1/CHANGES|external/libogg-1.3.1/compile|external/libogg-1.3.1/config.guess|external/libogg-1.3.1/config.h.in|external/libogg-1.3.1/config.sub|external/libogg-1.3.1/configure|external/libogg-1.3.1/configure.in|external/libogg-1.3.1/COPYING|external/libogg-1.3.1/depcomp|external/libogg-1.3.1/install-sh|external/libogg-1.3.1/libogg.spec|external/libogg-1.3.1/libogg.spec.in|external/libogg-1.3.1/ltmain.sh|external/libogg-1.3.1/Makefile.am|external/libogg-1.3.1/Makefile.in|external/libogg-1.3.1/missing|external/libogg-1.3.1/ogg-uninstalled.pc.in|external/libogg-1.3.1/ogg.m4|external/libogg-1.3.1/ogg.pc.in|external/libogg-1.3.1/README" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="SDL2_mixer.null.1634697257" name="SDL2_mixer"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.debug.1805459931">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.profile.1379560038">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.release.474706968">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.coverage.374506591">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.profile.819769294">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.coverage.578439860">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.qnx.qcc.configuration.sharedLib.debug.697070577">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.qnx.tools.ide.qde.managedbuilder.core.qccScannerInfo"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/SDL2_mixer"/>
+	</storageModule>
+</cproject>
