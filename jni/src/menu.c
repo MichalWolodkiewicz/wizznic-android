@@ -298,17 +298,6 @@ int runMenu(SDL_Surface* screen)
         menuPosY=0;
         //clearParticles();
         clearCredits();
-        #if defined (PLATFORM_SUPPORTS_STATSUPLOAD)
-        if(setting()->firstRun)
-        {
-          setMenu(menuStateUploadDiag);
-          menuPosX=1; //Default to "choose"
-        }
-        if(setting()->session == -1)
-        {
-          menuState=menuStateUpdate;
-        }
-        #endif
       } else
       if( getButton( C_BTNY ) )
       {
