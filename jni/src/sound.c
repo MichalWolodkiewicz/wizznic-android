@@ -71,11 +71,6 @@ int initSound()
 
 int loadSample(const char* fileName, int index)
 {
-	#ifdef OGG_MUSIC
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "OGG_MUSIC is defined");
-	#else
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "OGG_MUSIC is not defined");
-    #endif
   lastPlayed[index]=0;
 #ifdef DEBUG
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "loadSample(); Open: %s\n", fileName);
@@ -391,24 +386,21 @@ void soundSetMusic()
   mPos[1]=0.0f;
 
   if(setting()->disableMusic) return;
-
+  
   //Load list of userMusic and load that
   if(setting()->userMusic)
   {
-
     fileListMake( setting()->musicDir );
-    //Load first song
+    //Load first song 
     soundPlayUserSongNum(0,0); //Sets number of tracks too.
   } else {//Or load in-game music
     //Load the menu-song
     mus[0] = Mix_LoadMUS( "data/menu-music.ogg" );
-
     if(!mus[0])
     {
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "initSound(); Error; couldn't load menu-music.\n");
     }
-
-    Mix_FadeInMusic(mus[0], -1, 1500);
+    Mix_FadeInMusic(mus[0], -1, 1500); 
   } //Ingame
 }
 
@@ -427,4 +419,17 @@ void soundSetMusVol(int v)
     }
   }
   Mix_VolumeMusic(setting()->musicVol);
+}
+
+void releaseMusic() {
+  if(mus[0]) {
+    Mix_FreeMusic(mus[0]);
+    mus[0]=0;
+  }
+
+  if(mus[1]) {
+    Mix_FreeMusic(mus[1]);
+    mus[1]=0;
+  }
+  Mix_CloseAudio();
 }

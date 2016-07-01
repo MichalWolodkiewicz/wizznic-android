@@ -126,7 +126,6 @@ void queueBrickRemoval(playField* pf,int x,int y)
   if( pf->board[x][y]->dir == 0 )
   {
     pf->board[x][y]->dir=1;
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "append to removeList %d %d  -----", (pf->board[x][y])->dx, (pf->board[x][y])->dy);
     listAppendData(pf->removeList, (void*)pf->board[x][y]);
   }
 }
@@ -494,13 +493,9 @@ void simField(playField* pf, cursorType* cur)
     x++;
     b = (brickType*)li->data;
 	
-	debugBrick(10, b);
-	
     //Do we need to move it?
     int deltaX = (b->dx*brickSize+boardOffsetX) - b->pxx ;
     int deltaY = (b->dy*brickSize+boardOffsetY) - b->pxy ;
-	
-	debugBrick(20, b);
 	
     if(deltaX || deltaY )
     {
@@ -567,7 +562,6 @@ void simField(playField* pf, cursorType* cur)
   //Run teleport rules first
   doTelePort(pf,cur);
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 4");
-  debugBrick(30, b);
   //Static bricks
   for(y=FIELDSIZE-1; y > -1; y--)
   {
@@ -815,22 +809,16 @@ void simField(playField* pf, cursorType* cur)
     }
   }
 
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 6");
-  debugBrick(40, b);
   //Make switches affect the board.
   switchUpdateAll( pf );
 
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 7");
 	//Put back any reactivated walls if there is space.
   switchPutBack(pf);
 	
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 8");
   for(y=FIELDSIZE-1; y > -1; y--)
   {
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 9");
     for(x=0; x < FIELDSIZE; x++)
     {
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "simField() 10");
       if(pf->board[x][y])
       {
         //Unmark "checked" status.
@@ -847,8 +835,6 @@ void simField(playField* pf, cursorType* cur)
       }
     }
   }
-  debugBrick(50, b);
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "======= simField() end =====================");
 }
 
 int isBrick(brickType* b)
@@ -864,7 +850,6 @@ int onTopOfReserved(playField* pf, int x, int y)
 
 int doRules(playField* pf)
 {
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- doRules begin -----");
   int x,y;
   int removed=0;
   int bricksLeft=0;
@@ -877,7 +862,7 @@ int doRules(playField* pf)
     if( isBrick((brickType*)li->data) )
       bricksLeft++;
   }
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after while 1 -----");
+  
   for(y=FIELDSIZE-1; y > -1; y--)
   {
     for(x=0; x < FIELDSIZE; x++)
@@ -928,57 +913,38 @@ int doRules(playField* pf)
     }
   }
   
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after for 1 -----");
   //Remove ones that need removed
   li=&pf->removeList->begin;
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 start  -----");
   while( LISTFWD(pf->removeList, li))
   {
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- while 2 ... count = %d-----", pf->removeList->count);
     //Count dying bricks as alive until they are really removed
     bricksLeft++;
     b=(brickType*)li->data;
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- ...b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
     if(b->dir) {
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 1  -----");
       sndPlayOnce(SND_BRICKBREAK,b->pxx);
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 2  -----");
       b->dir=0;
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 3  -----");
       //Set die time left
       b->tl=pf->levelInfo->brick_die_ticks;
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 4  -----");
       //Reserve, to prevent bricks from falling into the animation
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- b->dx = %d, b->dy = %d  -----", b->dx, b->dy);
 	  // problem here
       pf->board[b->dx][b->dy]=pf->blocker;
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 5  -----");
     } else {
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 6  -----");
       b->tl -= getTicks();
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 7  -----");
       if(b->tl < 1)
       {
-		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 8  -----");
         pf->brickTypes[b->type-1]--;
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 9  -----");
         removed++;
         //Unreserve
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 10  -----");
         pf->board[b->dx][b->dy]=0;
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 11  -----");
         //Dealloc the brick
         free(b);
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 12  -----");
         //Remove from list
         listRemoveItem(pf->removeList, li, LIST_NEXT);
 		li=&pf->removeList->begin;
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- 13  -----");
       }
     }
   }
 	
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after while 2 -----");
   //Check for solvability, if no bricks were removed, no bricks are moving, and no bricks are to be removed
   //resuing x as counter.
   if(removed==0 && pf->removeList->count==0 && pf->movingList->count==0)
@@ -991,15 +957,12 @@ int doRules(playField* pf)
       }
     }
   }
-  
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- after if 1 -----");
 
   if(removed)
     return(removed);
 
   if(!bricksLeft)
     return(NOBRICKSLEFT);
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "----- doRules end -----");
   return(0);
 }
 
@@ -1082,7 +1045,6 @@ brickType* brickUnderCursor(playField* pf, int x, int y)
 
 int curMoveBrick(playField *pf, brickType *b, int dir)
 {
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "curMoveBrick start b->dy = %d", b->dy);
   //We can't move the brick, if it is falling.
   if( isBrickFalling(pf, b) ) return(0);
 
@@ -1106,12 +1068,10 @@ int curMoveBrick(playField *pf, brickType *b, int dir)
       if(!b->dmx)
       {
         b->dmx = dir;
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "curMoveBrick a end b->dy = %d", b->dy);
         return(1);
       }
     }
   }
-  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "curMoveBrick b end b->dy = %d", b->dy);
   return(0);
 }
 
@@ -1129,7 +1089,6 @@ int boardDestroyNextBrick(playField* pf)
         if( pf->board[x][y] != pf->blocker )
         {
           pf->board[x][y]->dir=1;
-		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "append to removeList %d %d  -----", (pf->board[x][y])->dx, (pf->board[x][y])->dy);
           listAppendData(pf->removeList, (void*)pf->board[x][y]);
           pf->board[x][y]->dir=0;
           sndPlayOnce(SND_BRICKBREAK,pf->board[x][y]->pxx);
@@ -1220,8 +1179,6 @@ int saveLevel(const char* fileName, playField* pf)
     fputs(str,f);
     free(str);
   }
-
-
 
   fputs("\n#The level-data block\n[data]",f);
 

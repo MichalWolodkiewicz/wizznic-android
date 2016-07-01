@@ -344,8 +344,8 @@ int main(int argc, char *argv[]) {
   #if defined(PLATFORM_NEEDS_EXIT)
   platformExit();
   #endif
-
+  releaseMusic();
   SDL_Quit();
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "SDL_Quit after"); 
   return(0);
 }
