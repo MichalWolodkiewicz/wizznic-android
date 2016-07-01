@@ -88,6 +88,7 @@ int getMenuState() { return(menuState); }
 
 int initMenu(SDL_Surface* screen)
 {
+  menuState=menuStateIntro;
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "initMenu start");
   menuBg[MENUGFXINTRO] = loadImg("data/menu/intro.png" );
   menuBg[MENUGFXHELP] = loadImg(""PLATFORM_HELP_FILE );
