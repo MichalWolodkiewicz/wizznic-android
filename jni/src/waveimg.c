@@ -21,9 +21,12 @@
 #include "pixel.h"
 #include "ticks.h"
 #include "settings.h"
+#include <SDL.h>
 
 void setWaving(wavingImage_t* wi, SDL_Surface* screen, SDL_Surface* img, int x, int y, int rots, int amount, int speed)
 {
+  if(img == NULL) {	
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "img is null");}
   wi->screen=screen;
   wi->img=img;
   wi->x=x;
@@ -39,18 +42,24 @@ void setWaving(wavingImage_t* wi, SDL_Surface* screen, SDL_Surface* img, int x, 
 //void waveImg(SDL_Surface* screen, SDL_Surface* img, int xx, int yy, int rots, int amount, int speed)
 void waveImg(wavingImage_t* wi)
 {
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "waveImg 1");
+  if(wi!=NULL) {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "wi is not null");
+  }
   int x, y,ox=0; //In the source image
   int nx, ny; //new x/y value for px
   uint32_t col; //Color of pixel
   int r,g,b;
-
-  float pxInc = (6.28318531/wi->img->w)*wi->rotations;
-
+  if(wi->img != NULL) {
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "wi->img is not null ");
+  } else {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "wi->img is null");
+  }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "wi->img->w = %d", wi->img->w);
+  float pxInc = (6.28318531/wi->img->w )*wi->rotations;
   float yInc;
 
   wi->privRotAmount -=(float)getTicks()/wi->speed;
-
   //If we use overlay, move it
   if( wi->useOverlay )
   {
@@ -62,7 +71,6 @@ void waveImg(wavingImage_t* wi)
   for(x=0; x < wi->img->w; x++)
   {
     yInc = round( cos(wi->privRotAmount+x*pxInc)*wi->amount );
-
     if(wi->useOverlay)
     {
       ox=(wi->overlayPos-x)%wi->overlay->w;

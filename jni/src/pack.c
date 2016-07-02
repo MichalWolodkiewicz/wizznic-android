@@ -304,13 +304,14 @@ void packInit()
   ps.packs = listInit(NULL);
   ps.numPacks=0;
 
-  //Add the wizznic pack as nr 0.
-  packAdd("packs/000_wizznic", 0 );
+  //Add the wizznic packs
+  packAdd("packs/000_wizznic", 0);
+  packAdd("packs/001_wizznic", 0);
 
   list_t* packDirList = listInit(NULL);
   list_t* usrPackDirList = listInit(NULL);
 
-  packScanDir("packs", packDirList);
+  //packScanDir("packs", packDirList);
   packScanDir( getUsrPackDir(), usrPackDirList);
 
   if(packDirList->count < 1)
@@ -468,6 +469,8 @@ void drawPackBox(SDL_Surface* screen,int posx, int posy,int packNum)
     ps.packBoxSpr[PCKLISTIMG_DLC_ENTER] = cutSprite(ps.packBoxImg, 0,42+42+42,260,42);
     ps.packBoxSpr[PCKLISTIMG_DLC_OFFLINE] = cutSprite(ps.packBoxImg, 0,42+42+42+42,260,42);
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "==== 10");
 
   //PackInfo is now in pi.
   packInfoType* pi;
@@ -508,6 +511,8 @@ void drawPackBox(SDL_Surface* screen,int posx, int posy,int packNum)
       drawSprite(screen, ps.packBoxSpr[PCKLISTIMG_DEFAULT], posx, posy);
     }
   }
+  
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "==== 20");
 
   //Blit the icon image
   SDL_BlitSurface(pi->icon,0,screen, &r);
@@ -533,4 +538,5 @@ void drawPackBox(SDL_Surface* screen,int posx, int posy,int packNum)
     sprintf(buf, "Infinite lives!");
   }
   txtWrite(screen, FONTSMALL, buf, posx+40, posy+4+24);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "==== 200");
 }

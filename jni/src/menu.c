@@ -100,9 +100,9 @@ int initMenu(SDL_Surface* screen)
   aboutInit();
 
   menuBg[MENUGFXBYE]=0;
-  menuYesNo=0;
-
-  menuBg[MENUGFXPACKBOX] = SDL_CreateRGBSurface(SDL_SWSURFACE, 260,42, (setting()->bpp*8), screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,0xff000000);
+  menuYesNo=0;	
+	
+  menuBg[MENUGFXPACKBOX] = SDL_CreateRGBSurface(0, 260,42, 32, 0x00FF0000,0x0000FF00,0x000000FF,0xFF000000);
 
   setWaving(&waving, screen, menuBg[MENUGFXINTRO], HSCREENW-149,HSCREENH-90,1,15,300);
   waving.privRotAmount=0; //In case it was nan
@@ -1180,17 +1180,25 @@ int runMenu(SDL_Surface* screen)
         SDL_FillRect(menuBg[MENUGFXPACKBOX],0, SDL_MapRGB(screen->format, 0,255,255));
 
         int_fast8_t packListItemWasClicked=0;
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "packState()->numPacks = %d", packState()->numPacks);
         while(ul < packState()->numPacks+1 && ul-scroll <  4)
         {
           //The selected box waves
           if(menuPosY== ul)
           {
+			if(menuBg[MENUGFXPACKBOX] != NULL) {
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "menuBg[MENUGFXPACKBOX] != NULL");
+			} else {
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "menuBg[MENUGFXPACKBOX] == NULL");
+			}
             drawPackBox(menuBg[MENUGFXPACKBOX], 0,0, ul );
-            setWaving(&waving, screen, menuBg[MENUGFXPACKBOX], HSCREENW-130,HSCREENH-70+(48*(ul-scroll)),2,4,150);
+			setWaving(&waving, screen, menuBg[MENUGFXPACKBOX], HSCREENW-130,HSCREENH-70+(48*(ul-scroll)),2,4,150);
             waveImg(&waving);
           } else {
             drawPackBox(screen, HSCREENW-130,HSCREENH-70+(48*(ul-scroll)), ul );
           }
+		  
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "after drawPackBox");
 
           //Check if this box was clicked
 
@@ -1210,7 +1218,6 @@ int runMenu(SDL_Surface* screen)
             }
           }
 
-          //Increase counter (doh, most obvious comment to date)
           ul++;
         }
 
@@ -1264,6 +1271,7 @@ int runMenu(SDL_Surface* screen)
             setMenu(menuStatePaused);
           }
         }
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "break");
       break;
 
       case menuStateOptions:
