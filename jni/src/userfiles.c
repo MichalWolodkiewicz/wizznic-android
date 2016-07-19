@@ -28,30 +28,15 @@ static char* strEditLvlDir;
 static char* strUsrPackDir;
 static char* strHsDir;
 
+void Java_com_game_wizznic_HelloSDL2Activity_initAppFolders(JNIEnv *env, jobject clazz, jstring storageRootPath) {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- init folders start");
+	strConfDir = (*env)->GetStringUTFChars(env, storageRootPath, 0);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- init folders end strConfDir =  %s", strConfDir);
+}
+
 void initUserPaths()
 {
-  #ifdef PER_USER_FILES
-
-    //Generate directory string
-    if(getenv("XDG_CONFIG_HOME") != NULL)
-    {
-      strConfDir = malloc( sizeof(char)*(strlen(getenv("XDG_CONFIG_HOME"))+strlen("/wizznic"))+1 );
-      sprintf( strConfDir, "%s/wizznic", getenv("XDG_CONFIG_HOME") );
-    } else if( getenv("HOME") != NULL)
-    {
-      strConfDir = malloc( sizeof(char)*(strlen(getenv("HOME"))+strlen("/.wizznic"))+1 );
-      sprintf( strConfDir, "%s/.wizznic", getenv("HOME") );
-    } else {
-      strConfDir = malloc(sizeof(char)*strlen(".")+1);
-      sprintf( strConfDir, "." );
-    }
-
-
-  #else
-    strConfDir = malloc(sizeof(char)*strlen(".")+1);
-    sprintf( strConfDir, "." );
-  #endif
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "initUserPaths");
   strEditLvlDir = malloc( sizeof(char)*( strlen(strConfDir)+strlen("/editorlevels")+1 ) );
   sprintf( strEditLvlDir, "%s/editorlevels", strConfDir );
 

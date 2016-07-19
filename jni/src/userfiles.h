@@ -1,6 +1,9 @@
 #ifndef USERFILES_H_INCLUDED
 #define USERFILES_H_INCLUDED
 
+#include <jni.h>
+#include <SDL.h>
+
 /************************************************************************
  * This file is part of Wizznic.                                        *
  * Copyright 2009-2015 Jimmy Christensen <dusted@dusted.dk>             *

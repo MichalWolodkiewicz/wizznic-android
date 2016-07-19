@@ -118,7 +118,7 @@ void loadSettings()
 
   sprintf( buf, "%s/settings.ini", getConfigDir() );
 
-  FILE *f = android_fopen(buf, "r");
+  FILE *f = fopen(buf, "r");
   if(f)
   {
     while( fgets(buf, 128, f) )
@@ -239,7 +239,56 @@ void loadSettings()
 
 void saveSettings()
 {
-  
+  char* buf = malloc(sizeof(char)*1024);
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- getConfigDir() = %s", getConfigDir());
+  sprintf( buf, "%s/settings.ini", getConfigDir() );
+
+  FILE *f = fopen(buf, "w");
+  if(f)
+  {
+    fprintf(f, "# Sound volume (0-128)\nsoundvol=%i\n\n"
+               "# Music volume (0-128)\nmusicvol=%i\n\n"
+               "# For the GP2X Wiz handheld: CPU Mhz.\nwizclock=%i\n\n"
+               "# For the GP2X Wiz handheld: System-volume.\nwizvolume=%i\n\n"
+               "# Show the FPS counter? 0 = No,  1 = Yes.\nshowfps=%i\n\n"
+               "# Use particle effects? 0 = No,  1 = Yes.\nparticles=%i\n\n"
+               "# 0 = Normal mode, progress through levels.\n# 1 = Arcade mode: Start on first level at game-over.\narcademode=%i\n\n"
+               "# The currently selected content pack.\npackdir=%s\n\n"
+               "# Name of the player.\nplayername=%s\n\n"
+               "# If usermusic is on, play music from this directory.\nmusicdir=%s\n\n"
+               "# 0 = Play the music that comes with the game. 1 = Use user-selected music. \nusermusic=%i\n\n"
+               "# 0 = Play music. 1 = Don't load any music (faster loading)\ndisablemusic=%i\n\n"
+               "# Allow Wizznic to access the Internet (http://wizznic.org)\n# 0 = No, 1 = Yes.\n# Helps Jimmy create more balanced gameplay in future versions.\n# Enables DLC downloading.\nallowonline=%i\n\n"
+               "# 0 = No OpenGL Scaling. 1 = Use OpenGL to scale the image.\nglenable=%i\n\n"
+               "# How to scale graphics ( 0 = Blocky/Sharp, 1 = Smooth/Blurry)\nglfilter=%i\n\n"
+               "# If using glenable, the width of the window in pixels.\nglwidth=%i\n\n"
+               "# If using glenable, the height of the window in pixels.\n# If this is -1, then select window size automatically.\nglheight=%i\n\n"
+               "# Go to full-screen mode.\nfullscreen=%i\n\n"
+               "# printf network traffic (when uploadstats=1)\nshowweb=%i\n",
+               settings.soundVol,
+               settings.musicVol,
+               settings.wizClock,
+               settings.wizVol,
+               settings.showFps,
+               settings.particles,
+               settings.arcadeMode,
+               settings.packDir,
+               settings.playerName,
+               settings.musicDir,
+               settings.userMusic,
+               settings.disableMusic,
+               settings.uploadStats,
+               settings.glEnable,
+               settings.glFilter,
+               settings.glWidth,
+               settings.glHeight,
+               settings.fullScreen,
+               settings.showWeb);
+    fclose( f );
+  } else {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "saveSettings(); Error: Couldn't open 'settings.ini' for writing.\n");
+  }
+  free(buf);
 }
 
 void applySettings()
