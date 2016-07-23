@@ -52,5 +52,7 @@ void resetMouseBtn();
 void resetBtnAll();
 int runControls();
 void initControls();
+int isBackButtonPressed();
+void resetChar();
 
 #endif // INPUT_H_INCLUDED

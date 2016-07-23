@@ -31,6 +31,10 @@ int getChar()
   return(inputChar);
 }
 
+void resetChar() {
+	inputChar = 0;
+}
+
 void resetMouseBtn()
 {
   getInpPointerState()->isDown=0;
@@ -330,7 +334,7 @@ int runControls()
               button[i].time=0;
             }
           }
-
+		  
           if( event.key.keysym.sym > 31 && event.key.keysym.sym < 123 )
           {
             inputChar=event.key.keysym.sym;
@@ -339,7 +343,7 @@ int runControls()
             {
               inputChar=toupper(inputChar);
             }
-          } else if( event.key.keysym.sym == SDLK_BACKSPACE || event.key.keysym.sym == SDLK_RETURN )
+          } else if( event.key.keysym.sym == SDLK_BACKSPACE || event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_AC_BACK)
           {
             inputChar=event.key.keysym.sym;
           }
@@ -412,6 +416,13 @@ void initControls()
   button[C_BTNSELECT].button = PLATFORM_BUTTON_SELECT;
   button[C_BTNVOLUP].button = PLATFORM_BUTTON_VOLUP;
   button[C_BTNVOLDOWN].button = PLATFORM_BUTTON_VOLDOWN;
+}
+
+int isBackButtonPressed() {
+	if(getChar() == SDLK_AC_BACK) {
+		return 1;
+	}
+	return 0;
 }
 
 

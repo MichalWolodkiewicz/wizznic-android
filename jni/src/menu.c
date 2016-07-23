@@ -168,6 +168,17 @@ void decPosY()
     menuPosY=menuMaxY;
 }
 
+void exitProgram(SDL_Surface* screen) {
+	startTransition(screen, TRANSITION_TYPE_CURTAIN_UP, 500 );
+            if( statsIsHighScore() )
+            {
+              setMenu(menuStateEnterHighScore);
+              menuReturnHack=menuStateOutro;
+            } else {
+              setMenu(menuStateOutro);
+            }
+}
+
 void incPosY()
 {
   menuChangeY=1;
@@ -211,7 +222,7 @@ int runMenu(SDL_Surface* screen)
 
   if(getButton(C_BTNB))
     sndPlayOnce(SND_MENUCLICK, 160);
-
+	
   if(getButton(C_UP) )
   {
     resetBtn(C_UP);
@@ -584,8 +595,9 @@ int runMenu(SDL_Surface* screen)
       if(dir || menuPosY!= 7)
       {
         txtWriteCenter(screen, FONTSMALL, STR_MENU_EXIT_CHOICE, HSCREENW, HSCREENH+60);
-        if( isBoxClicked( getTxtBox() ) )
-          menuPosY=7;
+        if( isBoxClicked( getTxtBox() ) ) {
+			menuPosY=7;
+		}
       }
 
       if(dir || menuPosY!= 8)
@@ -656,14 +668,7 @@ int runMenu(SDL_Surface* screen)
           break;
 
           case 7: //Exit program
-            startTransition(screen, TRANSITION_TYPE_CURTAIN_UP, 500 );
-            if( statsIsHighScore() )
-            {
-              setMenu(menuStateEnterHighScore);
-              menuReturnHack=menuStateOutro;
-            } else {
-              setMenu(menuStateOutro);
-            }
+            exitProgram(screen);
           break;
           case 5:
           case 8: //Pack selection
@@ -673,6 +678,10 @@ int runMenu(SDL_Surface* screen)
           break;
         }
       }
+	  if(isBackButtonPressed()) {
+		exitProgram(screen);
+		resetChar();
+	  }
       break;
 
       case menuStateHowto:
@@ -876,8 +885,9 @@ int runMenu(SDL_Surface* screen)
           setMenu(menuStatePaused);
         }
 
-        if(getButton(C_BTNB) || isPointerClicked() )
+        if(getButton(C_BTNB) || isPointerClicked() || isBackButtonPressed())
         {
+		  resetChar();
           resetBtn(C_BTNB);
           cleanUpGame();
           return(STATEQUIT);
