@@ -369,14 +369,6 @@ int runEditor(SDL_Surface* screen)
 
   txtWriteCenter(screen, FONTSMALL,fileName, HSCREENW,HSCREENH+110);
 
-  txtWriteCenter(screen, FONTSMALL,STR_EDIT_CONTROLS, HSCREENW,HSCREENH-120);
-
-
-  //Write which keys are used to cycle selected brick.
-  txtWriteCenter(screen, FONTSMALL,STR_EDIT_PREVBRICK_KEY,HSCREENW-142,HSCREENH-80);
-  txtWriteCenter(screen, FONTSMALL,STR_EDIT_NEXTBRICK_KEY,HSCREENW-88,HSCREENH-80);
-
-
   //Draw the currently selected brick.
   drawBrick(screen, selBrick,HSCREENW-125,HSCREENH-85);
 
@@ -448,8 +440,9 @@ int runEditor(SDL_Surface* screen)
         }
 
         //We continue back to the main editor
-        if( isPointerClicked() )
+        if( isPointerClicked() || isBackButtonPressed())
         {
+		  resetChar();
           resetMouseBtn();
           editorState=EDITOR_MAIN;
         }

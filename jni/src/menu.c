@@ -712,10 +712,10 @@ int runMenu(SDL_Surface* screen)
         fireWorks(screen);
         #endif
 
-        SDL_BlitSurface(menuBg[MENUGFXHELP] , NULL, screen, &(setting()->bgPos) );
-
         if(dir) txtWriteCenter(screen, FONTSMALL, STR_MENU_PRESS_B_PLAY, HSCREENW, HSCREENH+108);
-
+		
+		txtWriteCenter(screen, FONTMEDIUM, STR_MENU_ARE_YOU_READY, HSCREENW, HSCREENH);
+		
         if( getButton( C_BTNB ) || isPointerClicked() )
         {
           resetBtn( C_BTNB );
@@ -953,7 +953,6 @@ int runMenu(SDL_Surface* screen)
         //Show keys only if cursor not active
         if( !(getInpPointerState()->timeSinceMoved < POINTER_SHOW_TIMEOUT) )
         {
-          txtWriteCenter(screen, FONTSMALL, STR_MENU_LVLEDIT_USAGE, HSCREENW, HSCREENH+106);
         } else  {
           //Show Play Clone Edit buttons for the mouse
           if( menuPosY > 1)

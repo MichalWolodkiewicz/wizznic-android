@@ -121,8 +121,8 @@
     #define STR_SELECT_CTRLS            "Use Joystick, button 1.\n"
  #else
     //Menu
-    #define STR_MENU_PRESS_B            "Press Ctrl"
-    #define STR_MENU_PRESS_B_PLAY       "Press Ctrl to Play"
+    #define STR_MENU_PRESS_B            "Touch screen"
+    #define STR_MENU_PRESS_B_PLAY       "Touch screen to Play"
     #define STR_SELECT_CTRLS            "Use Arrows,Ctrl or Mouse.\n"
 
     #define STR_MENU_LVLEDIT_USAGE      "Edit:Ctrl Try:Alt Copy:Z Upload:X"
@@ -160,6 +160,7 @@
 
 #define STR_MENU_PAUSE_HEADLINE     "Pause!"
 #define STR_MENU_WIZZNIC_HEADLINE   "Wizznic!"
+#define STR_MENU_ARE_YOU_READY		"Are you ready?"
 
 #define STR_MENU_NEW_GAME_CHOICE    "New Game"
 #define STR_MENU_RESUME_CHOICE      "Continue"
@@ -316,34 +317,11 @@
 #define STR_EDIT_STATUS             "Status:"
 #define STR_EDIT_NOT_SAVED_WARNING  "Not Saved!"
 
-
-#if defined(GP2X) || defined(WIZ)
-  #define STR_EDIT_NEXTBRICK_KEY      "B>"
-  #define STR_EDIT_PREVBRICK_KEY      "<A"
-#elif defined (PSP)
-  #define STR_EDIT_NEXTBRICK_KEY      "X>"
-  #define STR_EDIT_PREVBRICK_KEY      "<Y"
-#elif defined (PANDORA)
-  #define STR_EDIT_NEXTBRICK_KEY      "B>"
-  #define STR_EDIT_PREVBRICK_KEY      "<A"
-#elif defined (GCW0)
-  #define STR_EDIT_NEXTBRICK_KEY      "A>"
-  #define STR_EDIT_PREVBRICK_KEY      "<X"
-#else
-  #define STR_EDIT_NEXTBRICK_KEY      "Alt"
-  #define STR_EDIT_PREVBRICK_KEY      "Ctrl"
-#endif
-
 //This is defined in strings.c
 extern const char* str_brick_names[];
 
-#ifdef PANDORA /// added by farox for pandora port
-#define STR_EDIT_PRESS_EXIT_TO_EXIT "Press START to exit without saving."
-#define STR_EDIT_PRESS_SAVE_TO_SAVE "Press SELECT to save the level."
-#else
-#define STR_EDIT_PRESS_EXIT_TO_EXIT "Press Exit to exit without saving."
-#define STR_EDIT_PRESS_SAVE_TO_SAVE "Press Save to save the level."
-#endif
+#define STR_EDIT_PRESS_EXIT_TO_EXIT "Back button to dismiss changes"
+#define STR_EDIT_PRESS_SAVE_TO_SAVE "or touch screen and save level."
 
 #define STR_EDIT_BRICK              "Brick"
 
