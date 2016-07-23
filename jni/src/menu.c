@@ -391,8 +391,9 @@ int runMenu(SDL_Surface* screen)
         }
       }
 
-      if(getButton(C_BTNMENU) || isPointerEscapeClicked() )
+      if(getButton(C_BTNMENU) || isPointerEscapeClicked() || isBackButtonPressed())
       {
+		resetChar();
         resetBtn(C_BTNMENU);
         menuPosY=0;
         startTransition(screen, TRANSITION_TYPE_CURTAIN_DOWN, 500 );
