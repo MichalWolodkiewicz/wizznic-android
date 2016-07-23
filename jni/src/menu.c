@@ -766,8 +766,9 @@ int runMenu(SDL_Surface* screen)
           stats()->progress = getNumLevels();
         }
 
-        if( getButton(C_BTNB) || isPointerEscapeClicked() || getButton(C_BTNMENU) )
+        if( getButton(C_BTNB) || isPointerEscapeClicked() || getButton(C_BTNMENU) || isBackButtonPressed())
         {
+		  resetChar();
           resetMouseBtn();
           resetBtn( C_BTNB );
           resetBtn( C_BTNMENU );
@@ -1113,8 +1114,9 @@ int runMenu(SDL_Surface* screen)
         } //Not a negative number
 
 
-        if(isPointerEscapeClicked())
+        if(isPointerEscapeClicked() || isBackButtonPressed())
         {
+		  resetChar();
           startTransition(screen, TRANSITION_TYPE_CURTAIN_DOWN, 500 );
           menuState=menuStatePaused;
           resetMouseBtn();
@@ -1266,7 +1268,6 @@ int runMenu(SDL_Surface* screen)
 
               //Set selected pack.
               packSet(menuPosY);
-              SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Selected pack number: %i\n", menuPosY);
 
               //Save setting
               free( setting()->packDir);
@@ -1281,7 +1282,12 @@ int runMenu(SDL_Surface* screen)
             setMenu(menuStatePaused);
           }
         }
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "break");
+		if(isBackButtonPressed())
+        {
+		  resetChar();
+          startTransition(screen, TRANSITION_TYPE_CURTAIN_DOWN, 500 );
+          menuState=menuStatePaused;
+        }
       break;
 
       case menuStateOptions:
@@ -1294,8 +1300,9 @@ int runMenu(SDL_Surface* screen)
 
         if(dir || menuPosY!= 0) txtWriteCenter(screen, FONTSMALL, STR_MENU_OPTIONS_EXIT, HSCREENW, HSCREENH-70);
         //Save and exit Options menu
-        if( ( getButton( C_BTNMENU ) || (getButton( C_BTNB ) && menuPosY==0) ) || isBoxClicked( getTxtBox() ) )
+        if( isBackButtonPressed() || ( getButton( C_BTNMENU ) || (getButton( C_BTNB ) && menuPosY==0) ) || isBoxClicked( getTxtBox() ) )
         {
+		  resetChar();
           resetBtn( C_BTNMENU );
           resetBtn( C_BTNB );
           resetMouseBtn();
@@ -1549,11 +1556,12 @@ int runMenu(SDL_Surface* screen)
 
       txtWriteCenter(screen, FONTSMALL, STR_MENU_PRESS_B,HSCREENW,HSCREENH+100);
 
-      if( getButton( C_BTNB ) || isPointerClicked() )
-      {
+      if( getButton( C_BTNB ) || isPointerClicked() || isBackButtonPressed())
+      { 
+		resetChar();
         resetBtn( C_BTNB );
-          startTransition(screen, TRANSITION_TYPE_CURTAIN_DOWN, 500);
-          setMenu(menuStatePaused);
+        startTransition(screen, TRANSITION_TYPE_CURTAIN_DOWN, 500);
+        setMenu(menuStatePaused);
       }
 
       break;

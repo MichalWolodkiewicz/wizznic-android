@@ -169,8 +169,9 @@ int runEditor(SDL_Surface* screen)
   if( editorState == EDITOR_MAIN )
   {
 
-    if(getButton(C_BTNMENU) || isPointerEscapeClicked() )
+    if(getButton(C_BTNMENU) || isPointerEscapeClicked() || isBackButtonPressed())
     {
+	  resetChar();
       resetBtn( C_BTNMENU );
       resetMouseBtn();
 
