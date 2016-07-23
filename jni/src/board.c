@@ -133,6 +133,9 @@ void queueBrickRemoval(playField* pf,int x,int y)
 int loadField(playField* pf, const char* file)
 {
   FILE *f = android_fopen(file, "r");
+  if(f == NULL) {
+	  f = fopen(file, "r");
+  }
   if(!f)
   {
 	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,  "%s %i Board: couldn't open '%s'\n",__FILE__,__LINE__,file);
@@ -1110,7 +1113,7 @@ int saveLevel(const char* fileName, playField* pf)
   char buf[4096];
   int x,y;
 
-  FILE *f = android_fopen(fileName, "w");
+  FILE *f = fopen(fileName, "w");
   if(!f)
   {
     return(0);

@@ -39,6 +39,9 @@ levelInfo_t* mkLevelInfo(const char* fileName)
 
   tl=0; //Return null ptr if no file is found (malloc won't get called then)
   f = android_fopen(fileName, "r");
+  if(f == NULL) {
+	  f = fopen(fileName, "r");
+  }
   if(f)
   {
     //Allocate memory for level info.
