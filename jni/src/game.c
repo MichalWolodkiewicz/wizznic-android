@@ -328,8 +328,9 @@ int runGame(SDL_Surface* screen)
     }
 
     //Pause ?
-    if( getButton( C_BTNMENU ) || isPointerEscapeClicked() )
+    if( getButton( C_BTNMENU ) || isPointerEscapeClicked() || isBackButtonPressed())
     {
+	  resetChar();
 	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,  "runGame 2");
       resetBtn( C_BTNMENU );
       gamePause(screen);
