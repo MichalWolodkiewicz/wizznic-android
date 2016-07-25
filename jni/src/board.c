@@ -492,14 +492,16 @@ void simField(playField* pf, cursorType* cur)
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "*********** WHILE START ^^^^^^^^^^^^^^^^^^^^^^^^^^");
   while( LISTFWD(pf->movingList, li) && pf->movingList->count > 0)
   {
-	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while step begin movingList size = %d", pf->movingList->count);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while step begin movingList size = %d", pf->movingList->count);
     x++;
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while 1");
     b = (brickType*)li->data;
-	
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while 2");
     //Do we need to move it?
     int deltaX = (b->dx*brickSize+boardOffsetX) - b->pxx ;
-    int deltaY = (b->dy*brickSize+boardOffsetY) - b->pxy ;
-	
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while 3");
+	int deltaY = (b->dy*brickSize+boardOffsetY) - b->pxy ;
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " while 4");
     if(deltaX || deltaY )
     {
 	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "continue moveb rick");
@@ -556,6 +558,7 @@ void simField(playField* pf, cursorType* cur)
       //Remove brick from moving list
 	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Remove brick from moving list");
       listRemoveItem( pf->movingList, li, LIST_NEXT );
+	  li=&pf->movingList->begin;
     }
   }
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "*********** WHILE END ^^^^^^^^^^^^^^^^^^^^^^^^^^");
@@ -578,6 +581,7 @@ void simField(playField* pf, cursorType* cur)
         //Is it a brick
         if( isBrick(pf->board[x][y]) )
         {
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ it is brick ");
           //Cursor locked on it?
           if( cur->lock && cur->x == x && cur->y == y )
           {
@@ -595,22 +599,29 @@ void simField(playField* pf, cursorType* cur)
             {
                //Move down
               moveBrick(pf, x, y, 0, DIRDOWN, DOBLOCK, FALLINGSPEED);
+			  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ it falling ");
             } else //Laying on a reserved brick might mean that it should be attached to a mover.
             {
               if( pf->board[x][y+1]->type == RESERVED) //Magnet to mover
               {
                 // Warning: Confuzing and weird stuff below
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ Confuzing and weird stuff below ");
                 b=findMoving(pf,x,y+1);
                 if(b)
                 {
+				  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ Recurse down to see if there is a mover below. ");
                   //Recurse down to see if there is a mover below.
                   li=&pf->movingList->begin;
+				  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ problem before while ");
                   while( LISTFWD(pf->movingList, li) )
                   {
+					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ problem while step start ");  
                     if(b)
                     {
-                      if(b->type==MOVERHORIZ)
+					  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ b is not null ");
+					  if(b->type==MOVERHORIZ)
                       {
+						SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ b->type==MOVERHORIZ");
                         if(b->sx!=pf->board[x][y]->dx) { break; }
                         //Magnet onto brick
                         hack=pf->board[x][y];
@@ -623,11 +634,12 @@ void simField(playField* pf, cursorType* cur)
                         }
                       } else if(b->type==MOVERVERT)
                       {
-
+						SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ b->type==MOVERVERT");
                         //Only magnet if it's moving down (if it's moving up, it will eventually hit the resting brick)
                         if(b->sy < b->dy)
                         {
                           //Fetch the original underlying brick.
+						  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ Fetch the original underlying brick.");
                           b=findMoving(pf, x,y+1);
                           hack=pf->board[x][y];
                           if(moveBrick(pf,x,y,0,(b->dy-b->sy),NOBLOCK, VERTMOVERSPEED))
@@ -639,16 +651,20 @@ void simField(playField* pf, cursorType* cur)
                           }
                         }
                       }
-
+					  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ try find moving ");
                       b=findMoving(pf,x,b->dy+1);
-					  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "findMoving b->dy = %d", b->dy);
+					  if(b) {
+						SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "findMoving b->dy = %d", b->dy);
+					  }
                     } else {
                       break;
                     }
 
                   } //Loop through list
+				  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ Loop through list end ");
                 }
               } //Resting on a reserved
+			  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ Weird stuff end ");
             } //Not free
           }
         }
@@ -656,6 +672,7 @@ void simField(playField* pf, cursorType* cur)
         //Is it a mover
         if(isMover(pf->board[x][y]) &&  pf->board[x][y] && pf->board[x][y]->isActive)
         {
+		  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "------ Loop through list end ");
           //Horiz mover?
           if(pf->board[x][y]->type == MOVERHORIZ)
           {
@@ -809,7 +826,7 @@ void simField(playField* pf, cursorType* cur)
 
         }
       }
-    }
+    } // static bricks for end
   }
 
   //Make switches affect the board.
@@ -1017,18 +1034,33 @@ brickType* findMoving(playField* pf, int x, int y)
   if(x>=FIELDSIZE || y>=FIELDSIZE) return(0);
 
   //Bail if it's not a reserved brick
-  if(!pf->board[x][y] || pf->board[x][y]->type!=RESERVED) return(0);
-
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 1");
+  if(pf->board[x][y]) {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 1 pf->board[x][y] not null");
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "pf->board[x][y]->type=%d",pf->board[x][y]->type);
+  } else {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 1 pf->board[x][y] is null");
+  }
+  if((!pf->board[x][y]) || (pf->board[x][y]->type!=RESERVED)) {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 1 not reserved");  
+	return(0);
+  }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 2");
   listItem* li=&pf->movingList->begin;
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 3");
   while( LISTFWD(pf->movingList, li) )
   {
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() while step start");
     br=(brickType*)li->data;
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 4");
     if( (br->sx == x && br->sy==y) || (br->dx==x && br->dy==y) )
     {
+	  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 5");
       return(br);
     }
-
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() while step end");
   }
+  SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "---- findMoving() 6");
   return(0);
 }
 
