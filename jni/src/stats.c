@@ -100,7 +100,7 @@ void statsLoad()
     free(st.hsFn);
   st.hsFn = malloc(sizeof(char)*strlen(bufb)+1);
   strcpy(st.hsFn, bufb);
-  f=android_fopen(st.hsFn, "r");
+  f=fopen(st.hsFn, "r");
 
 
   if(f)
@@ -183,7 +183,7 @@ void statsSave()
   }
 
   //Open file
-  FILE* f = android_fopen(st.hsFn, "w");
+  FILE* f = fopen(st.hsFn, "w");
   if(f)
   {
     //Fill in header

@@ -71,8 +71,6 @@ int inpStrGet(inpStrState* state, int menuPosX, int menuPosY, int blink)
   char hack[2]={ ' ',0x00 };
   int hsKeyboardWasClicked=0;
 
-  txtWriteCenter(state->dstSurface, FONTSMALL, STR_STRINPUT_CONTROLS, HSCREENW,HSCREENH+108);
-
   if( getChar() )
   {
     if( getChar() == SDLK_RETURN )
